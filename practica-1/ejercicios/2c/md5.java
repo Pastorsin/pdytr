@@ -19,12 +19,6 @@ public class md5
                 messageDigest.update(data.getBytes("UTF-8"));
                 byte[] messageDigestMD5 = messageDigest.digest();
 
-                StringBuffer stringBuffer = new StringBuffer();
-                for (byte bytes : messageDigestMD5)
-                    stringBuffer.append(String.format("%02x", bytes & 0xff));
-
-                String receivedChecksum = new String(stringBuffer);
-
                 System.out.println(checksum);
                 System.out.println(stringBuffer);
 

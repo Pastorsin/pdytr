@@ -5,26 +5,18 @@
  * usage:
  * java Client serverhostname port
  */
-
 import java.io.*;
 import java.net.*;
 
+import java.security.*;
+
 import java.lang.Math;
+
+import checksum.MD5Checksum;
 
 
 public class Client
 {
-    static int correctBytes(byte[] buffer, byte aByte)
-    {
-        int correctBytes = 0;
-        for (int j = 0; j < buffer.length; j++)
-        {
-            if (buffer[j] == aByte)
-                correctBytes ++;
-        }
-
-        return correctBytes;
-    }
 
     public static void main(String[] args) throws IOException
     {
@@ -67,10 +59,16 @@ public class Client
             for (int j = 0; j < bufferSize; j++)
                 buffer[j] = i;
 
-            toserver.write(buffer, 0, buffer.length);
+            byte[] checksum = MD5Checksum.generate(buffer);
 
-            System.out.println("Correct bytes: " + correctBytes(buffer, i));
-            System.out.println("Expected bytes: " + bufferSize);
+            // Write the first 4 bytes -> size of message
+            toserver.writeInt(bufferSize);
+            // Write 16 bytes -> MD5 checksum
+            toserver.write(checksum, 0, checksum.length);
+            // Write message
+            toserver.write(buffer, 0, bufferSize);
+
+            System.out.println("Bytes writed: " + bufferSize);
             System.out.println("------------------------------------------");
         }
 

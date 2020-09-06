@@ -5,25 +5,18 @@
  * Usage:
  * java Server port
  */
-
 import java.io.*;
 import java.net.*;
 
 import java.util.Arrays;
 
+import java.security.*;
+
+import checksum.MD5Checksum;
+
+
 public class Server
 {
-    static int correctBytes(byte[] buffer, byte aByte)
-    {
-        int correctBytes = 0;
-        for (int j = 0; j < buffer.length; j++)
-        {
-            if (buffer[j] == aByte)
-                correctBytes ++;
-        }
-
-        return correctBytes;
-    }
 
     public static void main(String[] args) throws IOException
     {
@@ -69,35 +62,33 @@ public class Server
 
         for (byte i = 3; i <= 6; i++)
         {
-            int bufferSize = (int)Math.pow(10, i);
+            // Read the first 4 bytes -> size of message
+            int bufferSize = fromclient.readInt();
 
-            /* Read message */
+            // Read 16 bytes -> MD5 checksum
+            byte[] checksum = new byte[16];
+            fromclient.read(checksum);
 
             System.out.println("------------------------------------------");
-            System.out.println("10 ^ " + i);
+            System.out.println("10 ^ " + (int)Math.log10(bufferSize));
+            System.out.println(bufferSize);
             System.out.println("------------------------------------------");
-            // fromclient.readFully(buffer, 0, bufferSize);
 
+            // Read message until complet the buffer
             int totalBytesReaded = 0;
 
             byte[] buffer = new byte[bufferSize];
 
             while (totalBytesReaded < bufferSize)
             {
-                int bytesRemaining = bufferSize - totalBytesReaded;
+                int bytesReaded = fromclient.read(
+                                      buffer,
+                                      totalBytesReaded,
+                                      bufferSize - totalBytesReaded
+                                  );
 
-                byte[] auxBuffer = new byte[bytesRemaining];
-
-                int bytesReaded = fromclient.read(auxBuffer);
-
-                if ( bytesReaded > 0 ) {
-                    /* Copy the elements readed into buffer */
-                    for (int j = 0; j < bytesReaded; j++)
-                    {
-                        int index = totalBytesReaded + j;
-                        buffer[index] = auxBuffer[j];
-                    }                    
-                } else {
+                if ( bytesReaded < 0 )
+                {
                     System.err.println("Error to read buffer");
                     System.exit(1);
                 }
@@ -105,11 +96,12 @@ public class Server
                 totalBytesReaded += bytesReaded;
 
                 System.out.println("Readed bytes : " + bytesReaded);
+                System.out.println("Total bytes read : " + totalBytesReaded);
                 System.out.println("Remaining bytes : " + (bufferSize - totalBytesReaded));
                 System.out.println();
             }
 
-            System.out.println(">> Correct bytes: " + correctBytes(buffer, i));
+            System.out.println(">> Correct bytes: " + MD5Checksum.isValid(checksum, buffer));
             System.out.println(">> Total bytes read: " + totalBytesReaded);
         }
 

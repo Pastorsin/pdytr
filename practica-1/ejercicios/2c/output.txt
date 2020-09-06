@@ -1,59 +1,20 @@
 ------------------------------------------
-10 ^ 3
+10 ^ 3 : 1000
 ------------------------------------------
-Readed bytes : 1000
-Remaining bytes : 0
-
->> Correct bytes: 1000
->> Total bytes read: 1000
+>> Correct bytes: true
+>> Total bytes read: 0
 ------------------------------------------
-10 ^ 4
+10 ^ 4 : 10000
 ------------------------------------------
-Readed bytes : 10000
-Remaining bytes : 0
-
->> Correct bytes: 10000
->> Total bytes read: 10000
+>> Correct bytes: true
+>> Total bytes read: 0
 ------------------------------------------
-10 ^ 5
+10 ^ 5 : 100000
 ------------------------------------------
-Readed bytes : 65482
-Remaining bytes : 34518
-
-Readed bytes : 32741
-Remaining bytes : 1777
-
-Readed bytes : 1777
-Remaining bytes : 0
-
->> Correct bytes: 100000
->> Total bytes read: 100000
+>> Correct bytes: true
+>> Total bytes read: 0
 ------------------------------------------
-10 ^ 6
+10 ^ 6 : 1000000
 ------------------------------------------
-Readed bytes : 131072
-Remaining bytes : 868928
-
-Readed bytes : 131072
-Remaining bytes : 737856
-
-Readed bytes : 131072
-Remaining bytes : 606784
-
-Readed bytes : 131072
-Remaining bytes : 475712
-
-Readed bytes : 131072
-Remaining bytes : 344640
-
-Readed bytes : 131072
-Remaining bytes : 213568
-
-Readed bytes : 131072
-Remaining bytes : 82496
-
-Readed bytes : 82496
-Remaining bytes : 0
-
->> Correct bytes: 1000000
->> Total bytes read: 1000000
+>> Correct bytes: true
+>> Total bytes read: 0
