@@ -14,6 +14,7 @@ import java.lang.Math;
 
 public class Client
 {
+
     public static void main(String[] args) throws IOException
     {
         /* Check the number of command line parameters */
@@ -44,24 +45,22 @@ public class Client
         fromserver = new DataInputStream(socketwithserver.getInputStream());
         toserver   = new DataOutputStream(socketwithserver.getOutputStream());
 
+        /* Send 4 messages to server, from 10^3 until 10^6 bytes */
         for (byte i = 3; i <= 6; i++)
         {
             int bufferSize = (int)Math.pow(10, i);
 
             byte[] buffer = new byte[bufferSize];
 
-            // Fill buffer with actual index
+            // Fill the buffer with actual index
             for (int j = 0; j < bufferSize; j++)
                 buffer[j] = i;
 
-            System.out.println("In process to write " + buffer.length + " bytes.");
-
             toserver.write(buffer, 0, buffer.length);
 
-            System.out.println("Writed " + buffer.length + " bytes.");
+            System.out.println("Sended bytes: " + bufferSize);
+            System.out.println("------------------------------------------");
         }
-
-        toserver.write(new byte[0], 0, 0);
 
         fromserver.close();
         toserver.close();

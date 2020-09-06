@@ -11,9 +11,19 @@ import java.net.*;
 
 import java.util.Arrays;
 
-
 public class Server
 {
+    static int correctBytes(byte[] buffer, byte aByte)
+    {
+        int correctBytes = 0;
+        
+        for (int j = 0; j < buffer.length; j++)
+            if (buffer[j] == aByte)
+                correctBytes ++;
+
+        return correctBytes;
+    }
+
     public static void main(String[] args) throws IOException
     {
         /* Check the number of command line parameters */
@@ -60,24 +70,34 @@ public class Server
         {
             int bufferSize = (int)Math.pow(10, i);
 
-            byte[] buffer = new byte[bufferSize];
+            /* Read message */
 
-            int readedBytes = fromclient.read(buffer);
-
-            int correctBytes = 0;
-            for (int j = 0; j < buffer.length; j++)
-            {
-                if (buffer[j] == i)
-                    correctBytes ++;
-            }
-
-            System.out.println("Readed bytes: " + readedBytes);
-            System.out.println("Correct bytes: " + correctBytes);
-            System.out.println("Expected bytes: " + bufferSize);
             System.out.println("------------------------------------------");
-        }
+            System.out.println("10 ^ " + i);
+            System.out.println("------------------------------------------");
 
-        fromclient.read(new byte[0]);
+            int correct = 0;
+            int read = 0;
+
+            int totalRead = 0;
+
+            while (correct < bufferSize && read >= 0) 
+            {
+                byte[] buffer = new byte[bufferSize];
+
+                read = fromclient.read(buffer);
+
+                if (read >= 0)
+                    totalRead += read;
+                
+                correct += correctBytes(buffer,i);
+
+                System.out.println("Correct bytes: " + correct);
+                System.out.println("Readed bytes : " + read);
+                System.out.println();
+            }
+            System.out.println(">> Total bytes read: " + totalRead);
+        }
 
         /* Close everything related to the client connection */
         fromclient.close();

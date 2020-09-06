@@ -13,6 +13,18 @@ import java.util.Arrays;
 
 public class Server
 {
+    static int correctBytes(byte[] buffer, byte aByte)
+    {
+        int correctBytes = 0;
+        for (int j = 0; j < buffer.length; j++)
+        {
+            if (buffer[j] == aByte)
+                correctBytes ++;
+        }
+
+        return correctBytes;
+    }
+
     public static void main(String[] args) throws IOException
     {
         /* Check the number of command line parameters */
@@ -59,23 +71,47 @@ public class Server
         {
             int bufferSize = (int)Math.pow(10, i);
 
+            /* Read message */
+
+            System.out.println("------------------------------------------");
+            System.out.println("10 ^ " + i);
+            System.out.println("------------------------------------------");
+            // fromclient.readFully(buffer, 0, bufferSize);
+
+            int totalBytesReaded = 0;
+
             byte[] buffer = new byte[bufferSize];
 
-            int readedBytes = fromclient.read(buffer);
+            while (totalBytesReaded < bufferSize)
+            {
+                int bytesRemaining = bufferSize - totalBytesReaded;
 
-            int correctBytes = 0;
-            for (int j = 0; j < buffer.length; j++) {
-                if (buffer[j] == i)
-                    correctlyBytes ++;
+                byte[] auxBuffer = new byte[bytesRemaining];
+
+                int bytesReaded = fromclient.read(auxBuffer);
+
+                if ( bytesReaded > 0 ) {
+                    /* Copy the elements readed into buffer */
+                    for (int j = 0; j < bytesReaded; j++)
+                    {
+                        int index = totalBytesReaded + j;
+                        buffer[index] = auxBuffer[j];
+                    }                    
+                } else {
+                    System.err.println("Error to read buffer");
+                    System.exit(1);
+                }
+
+                totalBytesReaded += bytesReaded;
+
+                System.out.println("Readed bytes : " + bytesReaded);
+                System.out.println("Remaining bytes : " + (bufferSize - totalBytesReaded));
+                System.out.println();
             }
 
-            System.out.println("Readed bytes: " + readedBytes);
-            System.out.println("Correct bytes: " + correctlyBytes);
-            System.out.println("Expected bytes: " + bufferSize);
-            System.out.println("------------------------------------------");
+            System.out.println(">> Correct bytes: " + correctBytes(buffer, i));
+            System.out.println(">> Total bytes read: " + totalBytesReaded);
         }
-
-        fromclient.read(new byte[0]);
 
         /* Close everything related to the client connection */
         fromclient.close();

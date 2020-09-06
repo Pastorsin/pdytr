@@ -1,0 +1,58 @@
+------------------------------------------
+10 ^ 3
+------------------------------------------
+Correct bytes: 1000
+Readed bytes : 1000
+
+>> Total bytes read: 1000
+------------------------------------------
+10 ^ 4
+------------------------------------------
+Correct bytes: 10000
+Readed bytes : 10000
+
+>> Total bytes read: 10000
+------------------------------------------
+10 ^ 5
+------------------------------------------
+Correct bytes: 65482
+Readed bytes : 65482
+
+Correct bytes: 98223
+Readed bytes : 32741
+
+Correct bytes: 100000
+Readed bytes : 32768
+
+>> Total bytes read: 130991
+------------------------------------------
+10 ^ 6
+------------------------------------------
+Correct bytes: 131072
+Readed bytes : 131072
+
+Correct bytes: 262144
+Readed bytes : 131072
+
+Correct bytes: 393216
+Readed bytes : 131072
+
+Correct bytes: 524288
+Readed bytes : 131072
+
+Correct bytes: 655360
+Readed bytes : 131072
+
+Correct bytes: 786432
+Readed bytes : 131072
+
+Correct bytes: 917504
+Readed bytes : 131072
+
+Correct bytes: 969009
+Readed bytes : 51505
+
+Correct bytes: 969009
+Readed bytes : -1
+
+>> Total bytes read: 969009
