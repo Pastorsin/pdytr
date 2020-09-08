@@ -58,7 +58,8 @@ int main(int argc, char *argv[])
 	//LEE EL MENSAJE DEL CLIENTE
      n = read(newsockfd,buffer,255);
      if (n < 0) error("ERROR reading from socket");
-     printf("Here is the message: %s\n",buffer);
+     for (int i = 0; i < 256; ++i)
+        printf("%i", buffer[i]);
 	 
 	 //RESPONDE AL CLIENTE
      n = write(newsockfd,"I got your message",18);

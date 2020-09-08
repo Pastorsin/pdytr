@@ -53,6 +53,12 @@ int main(int argc, char *argv[])
     printf("Please enter the message: ");
     bzero(buffer,256);
     fgets(buffer,255,stdin);
+
+    printf("%d\n", strlen(buffer));
+
+    for (int i = 0; i < 256; ++i)
+        printf("%i", buffer[i]);
+
     //ENVIA UN MENSAJE AL SOCKET
 	n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 

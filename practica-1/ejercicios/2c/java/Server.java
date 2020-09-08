@@ -75,34 +75,34 @@ public class Server
             System.out.println("------------------------------------------");
 
             // Read message until complet the buffer
-            int totalBytesReaded = 0;
+            int totalBytesRead = 0;
 
             byte[] buffer = new byte[bufferSize];
 
-            while (totalBytesReaded < bufferSize)
+            while (totalBytesRead < bufferSize)
             {
-                int bytesReaded = fromclient.read(
+                int bytesRead = fromclient.read(
                                       buffer,
-                                      totalBytesReaded,
-                                      bufferSize - totalBytesReaded
+                                      totalBytesRead,
+                                      bufferSize - totalBytesRead
                                   );
 
-                if ( bytesReaded < 0 )
+                if ( bytesRead < 0 )
                 {
                     System.err.println("Error to read buffer");
                     System.exit(1);
                 }
 
-                totalBytesReaded += bytesReaded;
+                totalBytesRead += bytesRead;
 
-                System.out.println("Readed bytes : " + bytesReaded);
-                System.out.println("Total bytes read : " + totalBytesReaded);
-                System.out.println("Remaining bytes : " + (bufferSize - totalBytesReaded));
+                System.out.println("Readed bytes : " + bytesRead);
+                System.out.println("Total bytes read : " + totalBytesRead);
+                System.out.println("Remaining bytes : " + (bufferSize - totalBytesRead));
                 System.out.println();
             }
 
             System.out.println(">> Correct bytes: " + MD5Checksum.isValid(checksum, buffer));
-            System.out.println(">> Total bytes read: " + totalBytesReaded);
+            System.out.println(">> Total bytes read: " + totalBytesRead);
         }
 
         /* Close everything related to the client connection */
