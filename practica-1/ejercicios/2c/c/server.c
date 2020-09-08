@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         printf("%02x", checksumCalculado[i]);
     printf("\n");
 
-    if (strcmp(checksumRecibido,checksumCalculado))
+    if (memcmp(checksumRecibido, checksumCalculado, MD5_DIGEST_LENGTH) == 0)
         printf("Los checksum coinciden, el mensaje es válido\n");
     else
         printf("Los checksum no coinciden\n");
