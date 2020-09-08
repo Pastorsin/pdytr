@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
 {
     int sockfd, newsockfd, portno, clilen;
     unsigned int msgSize;
-    unsigned char checksumRecibido[MD5_DIGEST_LENGTH];
     unsigned char checksumCalculado[MD5_DIGEST_LENGTH];
+    unsigned char checksumRecibido[MD5_DIGEST_LENGTH];
     struct sockaddr_in serv_addr, cli_addr;
     long int n, despla;
     if (argc < 2)
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     // Leo el mensaje recibido
     int bufferSize = ntohl(msgSize);
     printf("Tamaño del mensaje: %d\n", bufferSize);
-    
+
     unsigned char buffer[bufferSize];
     bzero(buffer, bufferSize);
 
@@ -88,14 +88,9 @@ int main(int argc, char *argv[])
 
     printf("\n");
 
-    // Calculo el checksum del mensaje recibido.
-    unsigned char output1[MD5_DIGEST_LENGTH];
+    // Se calcula el checksum
+    MD5(buffer, bufferSize, checksumCalculado);
 
-    MD5_CTX md5;
-    MD5_Init(&md5);
-    MD5_Update(&md5, buffer, bufferSize);
-    MD5_Final(output1, &md5);
-    
     printf("El checksum recibido es: ");
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
         printf("%02x", checksumRecibido[i]);
@@ -103,8 +98,13 @@ int main(int argc, char *argv[])
 
     printf("El checksum del mensaje es: ");
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", output1[i]);
-    printf("\n");    
+        printf("%02x", checksumCalculado[i]);
+    printf("\n");
+
+    if (strcmp(checksumRecibido,checksumCalculado))
+        printf("Los checksum coinciden, el mensaje es válido\n");
+    else
+        printf("Los checksum no coinciden\n");
 
     //RESPONDE AL CLIENTE
     n = write(newsockfd, "I got your message", 18);

@@ -14,12 +14,13 @@ void error(char *msg)
 
 int main(int argc, char *argv[])
 {
-    int tam = pow(10, 6);
+    int bufferSize = pow(10, 6);
     int sockfd, portno, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
+    unsigned char buffer[bufferSize];
     unsigned char checksum[MD5_DIGEST_LENGTH];
-    unsigned char buffer[tam];
+
     if (argc < 3)
     {
         fprintf(stderr, "usage %s hostname port\n", argv[0]);
@@ -55,44 +56,40 @@ int main(int argc, char *argv[])
     //DESCRIPTOR - DIRECCION - TAMAÑO DIRECCION
     if (connect(sockfd, &serv_addr, sizeof(serv_addr)) < 0)
         error("ERROR connecting");
-    bzero(buffer, tam);
+    bzero(buffer, bufferSize);
 
     /* Cargo el buffer en todas sus posiciones con el carácter 'a'.
     En la última posición indico el fin del string con '\0'.
     */
 
-    for(int i = 0; i < tam - 1; i++)
+    for(int i = 0; i < bufferSize - 1; i++)
         buffer[i] = 'a';
-    buffer[tam - 1] = '\0';
+    buffer[bufferSize - 1] = '\0';
 
     // Se calcula y envía el tamaño del mensaje en los primeros 4 bytes
-    int converted = htonl(tam);
+    int converted = htonl(bufferSize);
     n = write(sockfd, &converted, sizeof(converted));
     if (n < 0) error("ERROR writing to socket");
 
     // Se calcula el checksum
-    unsigned char output1[MD5_DIGEST_LENGTH];
-    MD5_CTX md5;
-    MD5_Init(&md5);
-    MD5_Update(&md5, buffer, tam);
-    MD5_Final(output1, &md5);
+    MD5(buffer, bufferSize, checksum);
 
     printf("El checksum es: ");
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", output1[i]);
+        printf("%02x", checksum[i]);
     printf("\n");
 
     // Se envía el checksum
-    n = write(sockfd, output1, MD5_DIGEST_LENGTH);
+    n = write(sockfd, checksum, MD5_DIGEST_LENGTH);
     if (n < 0) error("ERROR writing to socket");
 
     //Se envía el mensaje
-    n = write(sockfd, buffer, tam);
+    n = write(sockfd, buffer, bufferSize);
     if (n < 0) error("ERROR writing to socket");
-    bzero(buffer, tam);
+    bzero(buffer, bufferSize);
 
     //ESPERA RECIBIR UNA RESPUESTA
-    n = read(sockfd, buffer, tam - 1);
+    n = read(sockfd, buffer, bufferSize - 1);
     if (n < 0)
         error("ERROR reading from socket");
     printf("%s\n", buffer);
