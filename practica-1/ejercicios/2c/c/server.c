@@ -61,19 +61,22 @@ int main(int argc, char *argv[])
 
     //LEE EL MENSAJE DEL CLIENTE
 
-    //Leo el tamaño del mensaje
+    // Leo el tamaño del mensaje
     n = read(newsockfd, &msgSize, 4);
     if (n < 0) error("ERROR reading from socket");
+
+    // Leo el checksum del mensaje
+    n = read(newsockfd, checksumRecibido, MD5_DIGEST_LENGTH);
+    if (n < 0) error("ERROR reading from socket");
+
+
+    // Leo el mensaje recibido
     int bufferSize = ntohl(msgSize);
+    printf("Tamaño del mensaje: %d\n", bufferSize);
+    
     unsigned char buffer[bufferSize];
     bzero(buffer, bufferSize);
 
-    //leo el checksum del mensaje
-    n = read(newsockfd, checksumRecibido, MD5_DIGEST_LENGTH);
-    if (n < 0) error("ERROR reading from socket");
-    printf("Tamaño del mensaje: %d\n", bufferSize);
-
-    //leo el mensaje recibido
     despla = 0;
     while(despla < bufferSize)
     {

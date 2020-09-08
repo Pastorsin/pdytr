@@ -57,28 +57,24 @@ int main(int argc, char *argv[])
         error("ERROR connecting");
     bzero(buffer, tam);
 
+    /* Cargo el buffer en todas sus posiciones con el carácter 'a'.
+    En la última posición indico el fin del string con '\0'.
+    */
+
     for(int i = 0; i < tam - 1; i++)
         buffer[i] = 'a';
-    
-    printf("Sin \\0 : ");
-    printf("%d - %d \n", strlen(buffer), tam);
-
     buffer[tam - 1] = '\0';
 
-    printf("Con \\0 : ");
-    printf("%d - %d \n", strlen(buffer), tam);
-
-    //Se calcula y envía el tamaño del mensaje
+    // Se calcula y envía el tamaño del mensaje en los primeros 4 bytes
     int converted = htonl(tam);
     n = write(sockfd, &converted, sizeof(converted));
     if (n < 0) error("ERROR writing to socket");
 
-    /* Calcular checksum */
+    // Se calcula el checksum
     unsigned char output1[MD5_DIGEST_LENGTH];
-
     MD5_CTX md5;
     MD5_Init(&md5);
-    MD5_Update(&md5, buffer, strlen(buffer));
+    MD5_Update(&md5, buffer, tam);
     MD5_Final(output1, &md5);
 
     printf("El checksum es: ");
@@ -86,6 +82,7 @@ int main(int argc, char *argv[])
         printf("%02x", output1[i]);
     printf("\n");
 
+    // Se envía el checksum
     n = write(sockfd, output1, MD5_DIGEST_LENGTH);
     if (n < 0) error("ERROR writing to socket");
 
