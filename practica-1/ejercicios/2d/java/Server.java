@@ -100,10 +100,6 @@ public class Server
         System.out.println(">> Correct bytes: " + MD5Checksum.isValid(checksum, buffer));
         System.out.println(">> Total bytes read: " + totalBytesRead);
 
-        for (int i = 0; i < bufferSize; i++) {
-            System.out.println(buffer[i]);            
-        }
-
         /* Close everything related to the client connection */
         fromclient.close();
         toclient.close();
