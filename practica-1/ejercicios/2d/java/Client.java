@@ -14,6 +14,8 @@ import java.lang.Math;
 
 import checksum.MD5Checksum;
 
+import java.time.*;
+
 
 public class Client
 {
@@ -21,9 +23,9 @@ public class Client
     public static void main(String[] args) throws IOException
     {
         /* Check the number of command line parameters */
-        if ((args.length != 2) || (Integer.valueOf(args[1]) <= 0) )
+        if ((args.length != 3) || (Integer.valueOf(args[1]) <= 0) || (Integer.valueOf(args[2]) <= 0) )
         {
-            System.out.println("2 arguments needed: serverhostname port");
+            System.out.println("3 arguments needed: serverhostname port sizeofmessage");
             System.exit(1);
         }
 
@@ -48,29 +50,35 @@ public class Client
         fromserver = new DataInputStream(socketwithserver.getInputStream());
         toserver   = new DataOutputStream(socketwithserver.getOutputStream());
 
-        /* Send 4 messages to server, from 10^3 until 10^6 bytes */
-        for (byte i = 3; i <= 6; i++)
-        {
-            int bufferSize = (int)Math.pow(10, i);
+        /* Send message to server */
+        int bufferSize = Integer.valueOf(args[2]);
 
-            byte[] buffer = new byte[bufferSize];
+        byte[] buffer = new byte[bufferSize];
 
-            // Fill the buffer with actual index
-            for (int j = 0; j < bufferSize; j++)
-                buffer[j] = i;
+        byte content = 1;
 
-            byte[] checksum = MD5Checksum.generate(buffer);
+        // Fill the buffer with '1's
+        for (int j = 0; j < bufferSize; j++)
+            buffer[j] = content;
 
-            // Write the first 4 bytes -> size of message
-            toserver.writeInt(bufferSize);
-            // Write 16 bytes -> MD5 checksum
-            toserver.write(checksum, 0, checksum.length);
-            // Write message
-            toserver.write(buffer, 0, bufferSize);
+        byte[] checksum = MD5Checksum.generate(buffer);
 
-            System.out.println("Bytes writed: " + bufferSize);
-            System.out.println("------------------------------------------");
-        }
+        long startTime = System.currentTimeMillis();
+        // Write the first 4 bytes -> size of message
+        toserver.writeInt(bufferSize);
+        // Write 16 bytes -> MD5 checksum
+        toserver.write(checksum, 0, checksum.length);
+        // Write message
+        toserver.write(buffer, 0, bufferSize);
+        // Wait server response
+        fromserver.read(buffer, 0, bufferSize);
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Time: " + (endTime - startTime) + " ms.");
+
+        System.out.println("Server response: " + new String(buffer));
+
+        System.out.println("Bytes write: " + bufferSize);
 
         fromserver.close();
         toserver.close();
