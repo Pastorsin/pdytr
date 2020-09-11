@@ -55,6 +55,7 @@ public class Client
 
         byte[] bufferOut = new byte[bufferSize];
         byte[] bufferIn = new byte[bufferSize];
+        byte[] checksum;
 
         byte content = 1;
 
@@ -62,7 +63,7 @@ public class Client
         for (int j = 0; j < bufferSize; j++)
             bufferOut[j] = content;
 
-        byte[] checksum = MD5Checksum.generate(bufferOut);
+        checksum = MD5Checksum.generate(bufferOut);
 
         long startTime = System.currentTimeMillis();
         // Write the first 4 bytes -> size of message
@@ -75,11 +76,11 @@ public class Client
         fromserver.read(bufferIn, 0, bufferSize);
         long endTime = System.currentTimeMillis();
 
-        System.out.println("Time: " + (endTime - startTime) + " ms.");
+        System.out.println((endTime - startTime));
 
-        System.out.println("Server response: " + new String(bufferIn));
-
-        System.out.println("Bytes write: " + bufferSize);
+        // System.out.println("Time: " + (endTime - startTime) + " ms.");
+        // System.out.println("Server response: " + new String(bufferIn));
+        // System.out.println("Bytes write: " + bufferSize);
 
         fromserver.close();
         toserver.close();

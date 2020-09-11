@@ -97,8 +97,8 @@ public class Server
         /* Send the bytes back */
         toclient.write(bufferResponse, 0, bufferResponse.length);
 
-        System.out.println(">> Correct bytes: " + MD5Checksum.isValid(checksum, buffer));
-        System.out.println(">> Total bytes read: " + totalBytesRead);
+        // System.out.println(">> Correct bytes: " + MD5Checksum.isValid(checksum, buffer));
+        // System.out.println(">> Total bytes read: " + totalBytesRead);
 
         /* Close everything related to the client connection */
         fromclient.close();
