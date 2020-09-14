@@ -1,7 +1,7 @@
 #!/bin/bash
 
-TIMES=250
-BUFFER_SIZES=(150000000 250000000 550000000 750000000 950000000)
+TIMES=100
+BUFFER_SIZES=(1000000 5000000 10000000 50000000 100000000 500000000 900000000)
 FILE="metrics.csv"
 
 start_server() {
@@ -10,8 +10,9 @@ start_server() {
 
 start_client() {
 	# Wait server and log listen port
-	until ss -ta | grep "*:$1"; do
+	until ss -ta | grep ":$1"; do
 		:
+		echo "Waiting"
 	done
 
 	time=$($CLIENT_SCRIPT localhost $1 $2)
