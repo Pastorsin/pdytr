@@ -15,7 +15,7 @@ void error(char *msg)
 
 int main(int argc, char *argv[])
 {
-    int sockfd, newsockfd, portno, clilen;
+    int sockfd, newsockfd, portno, clilen,i;
     unsigned int msgSize;
     unsigned char checksumCalculado[MD5_DIGEST_LENGTH];
     unsigned char checksumRecibido[MD5_DIGEST_LENGTH];
@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
         error("ERROR on accept");
 
     //LEE EL MENSAJE DEL CLIENTE
-
     // Leo el tamaño del mensaje
     n = read(newsockfd, &msgSize, 4);
     if (n < 0) error("ERROR reading from socket");
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
 
     // Leo el mensaje recibido
     int bufferSize = ntohl(msgSize);
-    printf("Tamaño del mensaje: %d\n", bufferSize);
+    //printf("Tamaño del mensaje: %d\n", bufferSize);
 
     unsigned char buffer[bufferSize];
     bzero(buffer, bufferSize);
@@ -83,10 +82,10 @@ int main(int argc, char *argv[])
         n = read(newsockfd, buffer + despla, bufferSize - despla);
         if (n < 0) error("ERROR reading from socket");
         despla += n;
-        printf("Tamaño de desplazamiento: %ld\n", despla);
+       // printf("Tamaño de desplazamiento: %ld\n", despla);
     }
 
-    printf("\n");
+    /*printf("\n");
 
     // Se calcula el checksum
     MD5(buffer, bufferSize, checksumCalculado);
@@ -105,7 +104,7 @@ int main(int argc, char *argv[])
         printf("Los checksum coinciden, el mensaje es válido\n");
     else
         printf("Los checksum no coinciden\n");
-
+    */
     //RESPONDE AL CLIENTE
     n = write(newsockfd, "I got your message", 18);
     if (n < 0) error("ERROR writing to socket");

@@ -12,23 +12,33 @@ void error(char *msg)
     exit(0);
 }
 
+double dwalltime(){
+        double sec;
+        struct timeval tv;
+
+        gettimeofday(&tv,NULL);
+        sec = tv.tv_sec + tv.tv_usec/1000000.0;
+        return sec;
+}
+
 int main(int argc, char *argv[])
 {
-    int bufferSize = pow(10, 6);
-    int sockfd, portno, n;
+    int bufferSize;
+    int sockfd, portno, n,i;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-    unsigned char buffer[bufferSize];
     unsigned char checksum[MD5_DIGEST_LENGTH];
-
-    if (argc < 3)
+    double timetick;	
+    if (argc < 4)
     {
         fprintf(stderr, "usage %s hostname port\n", argv[0]);
         exit(0);
     }
     //TOMA EL NUMERO DE PUERTO DE LOS ARGUMENTOS
     portno = atoi(argv[2]);
-
+    //TOMA EL TAMAÑO DEL BUFFER
+    bufferSize = atoi(argv[3]);
+    unsigned char buffer[bufferSize];    
     //CREA EL FILE DESCRIPTOR DEL SOCKET PARA LA CONEXION
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     //AF_INET - FAMILIA DEL PROTOCOLO - IPV4 PROTOCOLS INTERNET
@@ -60,24 +70,25 @@ int main(int argc, char *argv[])
 
     /* Cargo el buffer en todas sus posiciones con el carácter 'a'.
     En la última posición indico el fin del string con '\0'.
-    */
-
-    for(int i = 0; i < bufferSize - 1; i++)
+    */	
+    for(i = 0; i < bufferSize - 1; i++)
         buffer[i] = 'a';
     buffer[bufferSize - 1] = '\0';
 
-    // Se calcula y envía el tamaño del mensaje en los primeros 4 bytes
-    int converted = htonl(bufferSize);
-    n = write(sockfd, &converted, sizeof(converted));
-    if (n < 0) error("ERROR writing to socket");
-
-    // Se calcula el checksum
+    //Calcular el checksum	    
     MD5(buffer, bufferSize, checksum);
 
-    printf("El checksum es: ");
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
+    /*printf("El checksum es: ");
+    for (i = 0; i < MD5_DIGEST_LENGTH; i++)
         printf("%02x", checksum[i]);
     printf("\n");
+    */
+    // Se calcula y envía el tamaño del mensaje en los primeros 4 bytes
+    int converted = htonl(bufferSize);
+    //empieza el calculo del tiempo
+    timetick = dwalltime();
+    n = write(sockfd, &converted, sizeof(converted));
+    if (n < 0) error("ERROR writing to socket");
 
     // Se envía el checksum
     n = write(sockfd, checksum, MD5_DIGEST_LENGTH);
@@ -89,9 +100,9 @@ int main(int argc, char *argv[])
     bzero(buffer, bufferSize);
 
     //ESPERA RECIBIR UNA RESPUESTA
-    n = read(sockfd, buffer, bufferSize - 1);
+    n = read(sockfd, buffer, bufferSize);
     if (n < 0)
         error("ERROR reading from socket");
-    printf("%s\n", buffer);
+    printf("%f\n", dwalltime() - timetick);
     return 0;
 }
