@@ -7,6 +7,10 @@
 #include <math.h>
 #include <openssl/md5.h>
 
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 10000000
+#endif
+
 void error(char *msg)
 {
     perror(msg);
@@ -15,7 +19,8 @@ void error(char *msg)
 
 int main(int argc, char *argv[])
 {
-    int sockfd, newsockfd, portno, clilen,i;
+    static unsigned char buffer[BUFFER_SIZE];
+    int sockfd, newsockfd, portno, clilen, i;
     unsigned int msgSize;
     unsigned char checksumCalculado[MD5_DIGEST_LENGTH];
     unsigned char checksumRecibido[MD5_DIGEST_LENGTH];
@@ -71,9 +76,7 @@ int main(int argc, char *argv[])
 
     // Leo el mensaje recibido
     int bufferSize = ntohl(msgSize);
-    //printf("Tamaño del mensaje: %d\n", bufferSize);
 
-    unsigned char buffer[bufferSize];
     bzero(buffer, bufferSize);
 
     despla = 0;
@@ -82,31 +85,11 @@ int main(int argc, char *argv[])
         n = read(newsockfd, buffer + despla, bufferSize - despla);
         if (n < 0) error("ERROR reading from socket");
         despla += n;
-       // printf("Tamaño de desplazamiento: %ld\n", despla);
     }
 
-    /*printf("\n");
-
-    // Se calcula el checksum
-    MD5(buffer, bufferSize, checksumCalculado);
-
-    printf("El checksum recibido es: ");
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", checksumRecibido[i]);
-    printf("\n");
-
-    printf("El checksum del mensaje es: ");
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", checksumCalculado[i]);
-    printf("\n");
-
-    if (memcmp(checksumRecibido, checksumCalculado, MD5_DIGEST_LENGTH) == 0)
-        printf("Los checksum coinciden, el mensaje es válido\n");
-    else
-        printf("Los checksum no coinciden\n");
-    */
     //RESPONDE AL CLIENTE
     n = write(newsockfd, "I got your message", 18);
     if (n < 0) error("ERROR writing to socket");
+    
     return 0;
 }

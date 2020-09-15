@@ -6,39 +6,43 @@
 #include <math.h>
 #include <openssl/md5.h>
 #include <stdlib.h>
+
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 10000000
+#endif
+
 void error(char *msg)
 {
     perror(msg);
     exit(0);
 }
 
-double dwalltime(){
-        double sec;
-        struct timeval tv;
+double dwalltime()
+{
+    double sec;
+    struct timeval tv;
 
-        gettimeofday(&tv,NULL);
-        sec = tv.tv_sec + tv.tv_usec/1000000.0;
-        return sec;
+    gettimeofday(&tv, NULL);
+    sec = tv.tv_sec + tv.tv_usec / 1000000.0;
+    return sec;
 }
 
 int main(int argc, char *argv[])
 {
-    int bufferSize;
-    int sockfd, portno, n,i;
+    static unsigned char bufferIn[BUFFER_SIZE];
+    static unsigned char bufferOut[BUFFER_SIZE];
+    int sockfd, portno, n, i;
     struct sockaddr_in serv_addr;
     struct hostent *server;
     unsigned char checksum[MD5_DIGEST_LENGTH];
-    double timetick;	
-    if (argc < 4)
+    double timetick;
+    if (argc < 3)
     {
         fprintf(stderr, "usage %s hostname port\n", argv[0]);
         exit(0);
     }
     //TOMA EL NUMERO DE PUERTO DE LOS ARGUMENTOS
     portno = atoi(argv[2]);
-    //TOMA EL TAMAÑO DEL BUFFER
-    bufferSize = atoi(argv[3]);
-    unsigned char buffer[bufferSize];    
     //CREA EL FILE DESCRIPTOR DEL SOCKET PARA LA CONEXION
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     //AF_INET - FAMILIA DEL PROTOCOLO - IPV4 PROTOCOLS INTERNET
@@ -66,25 +70,21 @@ int main(int argc, char *argv[])
     //DESCRIPTOR - DIRECCION - TAMAÑO DIRECCION
     if (connect(sockfd, &serv_addr, sizeof(serv_addr)) < 0)
         error("ERROR connecting");
-    bzero(buffer, bufferSize);
+    bzero(bufferIn, BUFFER_SIZE);
 
-    /* Cargo el buffer en todas sus posiciones con el carácter 'a'.
+    /* Cargo el bufferIn en todas sus posiciones con el carácter 'a'.
     En la última posición indico el fin del string con '\0'.
-    */	
-    for(i = 0; i < bufferSize - 1; i++)
-        buffer[i] = 'a';
-    buffer[bufferSize - 1] = '\0';
-
-    //Calcular el checksum	    
-    MD5(buffer, bufferSize, checksum);
-
-    /*printf("El checksum es: ");
-    for (i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", checksum[i]);
-    printf("\n");
     */
+    for(i = 0; i < BUFFER_SIZE - 1; i++)
+        bufferIn[i] = 'a';
+    bufferIn[BUFFER_SIZE - 1] = '\0';
+
+    //Calcular el checksum
+    MD5(bufferIn, BUFFER_SIZE, checksum);
+
     // Se calcula y envía el tamaño del mensaje en los primeros 4 bytes
-    int converted = htonl(bufferSize);
+    int converted = htonl(BUFFER_SIZE);
+
     //empieza el calculo del tiempo
     timetick = dwalltime();
     n = write(sockfd, &converted, sizeof(converted));
@@ -95,14 +95,13 @@ int main(int argc, char *argv[])
     if (n < 0) error("ERROR writing to socket");
 
     //Se envía el mensaje
-    n = write(sockfd, buffer, bufferSize);
+    n = write(sockfd, bufferIn, BUFFER_SIZE);
     if (n < 0) error("ERROR writing to socket");
-    bzero(buffer, bufferSize);
 
     //ESPERA RECIBIR UNA RESPUESTA
-    n = read(sockfd, buffer, bufferSize);
-    if (n < 0)
-        error("ERROR reading from socket");
+    n = read(sockfd, bufferOut, BUFFER_SIZE);    
+    if (n < 0) error("ERROR reading from socket");
     printf("%f\n", dwalltime() - timetick);
+
     return 0;
 }
