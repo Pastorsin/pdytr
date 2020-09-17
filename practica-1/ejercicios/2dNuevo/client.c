@@ -65,11 +65,6 @@ int main(int argc, char *argv[])
     bzero(buffer,256);
     //el mensaje por defecto va a ser de un caracter.
     buffer[0] = 'a';	
-    /*printf("%d\n", strlen(buffer));
-
-    for (int i = 0; i < 256; ++i)
-        printf("%i", buffer[i]);
-    */	
     timetick = dwalltime();	
     //ENVIA UN MENSAJE AL SOCKET
 	n = write(sockfd,buffer,strlen(buffer));
@@ -81,7 +76,6 @@ int main(int argc, char *argv[])
 	n = read(sockfd,buffer,255);
     if (n < 0) 
          error("ERROR reading from socket");
-    printf("tiempo de comunicacion: %f\n",( dwalltime() - timetick - 1)/2);
-	printf("%s\n",buffer);
+    printf("%f\n",( dwalltime() - timetick - 1)/2);
     return 0;
 }

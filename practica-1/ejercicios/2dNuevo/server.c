@@ -59,11 +59,10 @@ int main(int argc, char *argv[])
 	//LEE EL MENSAJE DEL CLIENTE
      n = read(newsockfd,buffer,255);
      if (n < 0) error("ERROR reading from socket");
-     /*for (int i = 0; i < 256; ++i)
-        printf("%i", buffer[i]);*/
 	 
      //espera 1 segundo
      sleep(1);
+     
 	 //RESPONDE AL CLIENTE
      n = write(newsockfd,buffer,255);
      if (n < 0) error("ERROR writing to socket");
