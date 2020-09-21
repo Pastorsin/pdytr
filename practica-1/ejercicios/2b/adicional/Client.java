@@ -45,14 +45,12 @@ public class Client
         fromserver = new DataInputStream(socketwithserver.getInputStream());
         toserver   = new DataOutputStream(socketwithserver.getOutputStream());
 
-        byte[] buffer;
-
         /* Send 4 messages to server, from 10^3 until 10^6 bytes */
         for (byte i = 3; i <= 6; i++)
         {
             int bufferSize = (int)Math.pow(10, i);
 
-            buffer = new byte[bufferSize];
+            byte[] buffer = new byte[bufferSize];
 
             // Fill the buffer with actual index
             for (int j = 0; j < bufferSize; j++)
@@ -63,14 +61,6 @@ public class Client
             System.out.println("Bytes send: " + bufferSize);
             System.out.println("------------------------------------------");
         }
-
-        /* Recv data back from server (get space) */
-        buffer = new byte[256];
-        fromserver.read(buffer);
-
-        /* Show data received from server */
-        String resp = new String(buffer);
-        System.out.println(resp);
 
         fromserver.close();
         toserver.close();
