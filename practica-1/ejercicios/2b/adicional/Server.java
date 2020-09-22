@@ -11,20 +11,36 @@ import java.net.*;
 
 import java.util.Arrays;
 
+public class Server
+{
+    static int correctBytes(byte[] buffer, byte aByte)
+    {
+        int correctBytes = 0;
+        
+        for (int j = 0; j < buffer.length; j++)
+            if (buffer[j] == aByte)
+                correctBytes ++;
 
-public class Server {
-    public static void main(String[] args) throws IOException {
+        return correctBytes;
+    }
+
+    public static void main(String[] args) throws IOException
+    {
         /* Check the number of command line parameters */
-        if ((args.length != 1) || (Integer.valueOf(args[0]) <= 0) ) {
+        if ((args.length != 1) || (Integer.valueOf(args[0]) <= 0) )
+        {
             System.out.println("1 arguments needed: port");
             System.exit(1);
         }
 
         /* The server socket */
         ServerSocket serverSocket = null;
-        try {
+        try
+        {
             serverSocket = new ServerSocket(Integer.valueOf(args[0]));
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             System.out.println("Error on server socket");
             System.exit(1);
         }
@@ -32,9 +48,12 @@ public class Server {
         /* The socket to be created on the connection with the client */
         Socket connected_socket = null;
 
-        try { /* To wait for a connection with a client */
+        try /* To wait for a connection with a client */
+        {
             connected_socket = serverSocket.accept();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             System.err.println("Error on Accept");
             System.exit(1);
         }
@@ -47,28 +66,38 @@ public class Server {
         fromclient = new DataInputStream(connected_socket.getInputStream());
         toclient   = new DataOutputStream(connected_socket.getOutputStream());
 
-        byte[] buffer;
-
-        for (byte i = 3; i <= 6; i++) {
+        for (byte i = 3; i <= 6; i++)
+        {
             int bufferSize = (int)Math.pow(10, i);
 
-            buffer = new byte[bufferSize];
+            /* Read message */
 
-            int bytesRead = fromclient.read(buffer);
-
-            System.out.println("Bytes read: " + bytesRead);
-            System.out.println("Expected bytes: " + bufferSize);
             System.out.println("------------------------------------------");
+            System.out.println("10 ^ " + i);
+            System.out.println("------------------------------------------");
+
+            int correct = 0;
+            int read = 0;
+
+            int totalRead = 0;
+
+            while (correct < bufferSize && read >= 0) 
+            {
+                byte[] buffer = new byte[bufferSize];
+
+                read = fromclient.read(buffer);
+
+                if (read >= 0)
+                    totalRead += read;
+                
+                correct += correctBytes(buffer,i);
+
+                System.out.println("Correct bytes: " + correct);
+                System.out.println("Bytes read : " + read);
+                System.out.println();
+            }
+            System.out.println(">> Total bytes read: " + totalRead);
         }
-
-        fromclient.read(new byte[0]);
-
-        /* Fixed string to the client */
-        String strresp = "I got your message";
-        buffer = strresp.getBytes();
-
-        /* Send the bytes back */
-        toclient.write(buffer, 0, buffer.length);
 
         /* Close everything related to the client connection */
         fromclient.close();

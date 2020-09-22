@@ -4,8 +4,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <math.h>
-#include <openssl/md5.h>
+#include <unistd.h>
 
 void error(char *msg)
 {
@@ -16,17 +15,15 @@ void error(char *msg)
 int main(int argc, char *argv[])
 {
     int sockfd, newsockfd, portno, clilen;
-    unsigned int msgSize;
-    unsigned char checksumCalculado[MD5_DIGEST_LENGTH];
-    unsigned char checksumRecibido[MD5_DIGEST_LENGTH];
+    char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
-    long int n, despla;
+    int n;
     if (argc < 2)
     {
         fprintf(stderr, "ERROR, no port provided\n");
         exit(1);
     }
-    
+
     // Crea el file descriptor del socket para la conexion
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -58,54 +55,17 @@ int main(int argc, char *argv[])
     // Devuelve un nuevo descriptor por el cual se van a realizar las comunicaciones
     if (newsockfd < 0)
         error("ERROR on accept");
+    bzero(buffer, 256);
 
-    // Leo el tamaño del mensaje
-    n = read(newsockfd, &msgSize, 4);
+    // Lee el mensaje del cliente
+    n = read(newsockfd, buffer, 255);
     if (n < 0) error("ERROR reading from socket");
 
-    // Leo el checksum del mensaje
-    n = read(newsockfd, checksumRecibido, MD5_DIGEST_LENGTH);
-    if (n < 0) error("ERROR reading from socket");
-
-    // Leo el mensaje recibido
-    int bufferSize = ntohl(msgSize);
-    printf("Tamaño del mensaje: %d\n", bufferSize);
-
-    unsigned char buffer[bufferSize];
-    bzero(buffer, bufferSize);
-
-    despla = 0;
-
-    while(despla < bufferSize)
-    {
-        n = read(newsockfd, buffer + despla, bufferSize - despla);
-
-        if (n < 0) error("ERROR reading from socket");
-        
-        despla += n;
-        printf("Tamaño de desplazamiento: %ld\n", despla);
-    }
-
-    // Se calcula el checksum
-    MD5(buffer, bufferSize, checksumCalculado);
-
-    printf("El checksum recibido es: ");
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", checksumRecibido[i]);
-    printf("\n");
-
-    printf("El checksum del mensaje es: ");
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
-        printf("%02x", checksumCalculado[i]);
-    printf("\n");
-
-    if (memcmp(checksumRecibido, checksumCalculado, MD5_DIGEST_LENGTH) == 0)
-        printf("Los checksum coinciden, el mensaje es válido\n");
-    else
-        printf("Los checksum no coinciden\n");
+    // Espera 1 segundo
+    sleep(1);
 
     // Responde al cliente
-    n = write(newsockfd, "I got your message", 18);
+    n = write(newsockfd, buffer, 255);
     if (n < 0) error("ERROR writing to socket");
 
     return 0;

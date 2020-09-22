@@ -74,10 +74,10 @@ public class Server
             System.out.println(bufferSize);
             System.out.println("------------------------------------------");
 
+            byte[] buffer = new byte[bufferSize];
+
             // Read message until complet the buffer
             int totalBytesRead = 0;
-
-            byte[] buffer = new byte[bufferSize];
 
             while (totalBytesRead < bufferSize)
             {
@@ -95,9 +95,9 @@ public class Server
 
                 totalBytesRead += bytesRead;
 
-                System.out.println("Readed bytes : " + bytesRead);
+                System.out.println("Bytes read : " + bytesRead);
                 System.out.println("Total bytes read : " + totalBytesRead);
-                System.out.println("Remaining bytes : " + (bufferSize - totalBytesRead));
+                System.out.println("Bytes remaining : " + (bufferSize - totalBytesRead));
                 System.out.println();
             }
 
