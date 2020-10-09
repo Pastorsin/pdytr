@@ -18,9 +18,11 @@ public class AskRemote
 		try {
 			String rname = "//" + args[0] + ":" + Registry.REGISTRY_PORT + "/remote";
 			IfaceRemoteClass remote = (IfaceRemoteClass) Naming.lookup(rname);
-			int bufferlength = 100;
+			int bufferlength = 1024;
 			byte[] buffer = new byte[bufferlength];
-			remote.sendThisBack(buffer);
+			buffer = remote.leer("archivo.txt",bufferlength,0);
+			System.out.println(new String(buffer));
+			remote.escribir("nuevo.txt",bufferlength,buffer);
 			System.out.println("Done");
 		} catch (Exception e) {
 			e.printStackTrace();
