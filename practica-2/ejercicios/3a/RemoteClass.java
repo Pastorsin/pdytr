@@ -20,4 +20,23 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
 		System.out.println("Data back to client");
 		return data;
 	}
+
+	public int leer(String nombre, int cantByte, int pos, byte[] data) throws RemoteException{
+
+	}
+
+	public int escribir(String nombre, int cantByte, byte[] data) throws RemoteException{
+		try{
+
+			FileOutputStream fileOutput = new FileOutputStream ("servidor/"nombre);
+			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
+
+			bufferedOutput.write(data,0,cantByte);
+			
+		}
+	}catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		bufferedOutput.close();
+	}
 }

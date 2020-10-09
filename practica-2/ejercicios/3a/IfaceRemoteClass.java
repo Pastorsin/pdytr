@@ -11,4 +11,8 @@ public interface IfaceRemoteClass extends Remote
 {
 	/* It will be possible to invoke this method from an application in other JVM */
 	public byte[] sendThisBack(byte[] data) throws RemoteException;
+
+	public int leer(String nombre, int cantByte, byte[] data) throws RemoteException;
+
+	public int escribir(String nombre, int cantByte, byte[] data) throws RemoteException;
 }
