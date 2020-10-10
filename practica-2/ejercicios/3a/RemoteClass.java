@@ -12,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.io.FileOutputStream;
+import java.io.File;
+
 import java.nio.ByteBuffer;
 
 /* This class implements the interface with remote methods */
@@ -64,6 +67,21 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
     }
 
     public int escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException {
+       	FileOutputStream stream = null;
+
+       	try {
+       		//vemos si el archivo ya existe
+       		File archivo = new File("server/" + nombre);
+    		Boolean existeArchivo = archivo.exists();
+
+    		//escribimos en el archivo
+            stream = new FileOutputStream("server/" + nombre, existeArchivo);
+            stream.write(data,0,cantidadBytes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.out.println("");
         return 1;
     }

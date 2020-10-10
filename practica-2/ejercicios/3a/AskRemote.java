@@ -39,11 +39,12 @@ public class AskRemote {
                 contenidoArchivo.put(buffer);
             }
 
-        } while(bytesLeidos > 0);
+        } while(bytesLeidos < VENTANA);
 
         System.out.println(new String(contenidoArchivo.array()));
 
     }
+
 
     public static void main(String[] args) {
         /* Look for hostname and msg length in the command line */
