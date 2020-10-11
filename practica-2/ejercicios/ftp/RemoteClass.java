@@ -61,23 +61,19 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         return buffer.array();
     }
 
-    public int escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException {
+    public long escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException {
         FileOutputStream stream = null;
-        int cantidadBytesEscritos = 0;
+        File archivo = null;
 
         try {
-            File archivo = new File(nombre);
-
-            // Vemos si el archivo ya existe
-            Boolean existeArchivo = archivo.exists();
+            archivo = new File(nombre);
 
             /* Si el archivo existe entonces abre el contenido sin sobreescribir
             Si el archivo no existe entonces se lo crea */
-            stream = new FileOutputStream(archivo, existeArchivo);
+            stream = new FileOutputStream(archivo, archivo.exists());
 
             // Escribimos en el archivo
             stream.write(data, 0, cantidadBytes);
-            cantidadBytesEscritos = cantidadBytes;
 
             // Cerramos el stream de datos
             stream.close();
@@ -86,6 +82,6 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
             e.printStackTrace();
         }
 
-        return cantidadBytesEscritos;
+        return archivo.length();
     }
 }

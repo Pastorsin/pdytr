@@ -25,11 +25,10 @@ public class AskRemote {
         int totalBytesLeidos = 0;
         int bytesLeidos = 0;
 
-        // Buffer en donde quedara el contenido del archivo
-        ByteBuffer contenidoArchivo = ByteBuffer.allocate(0);
-
         /* Comienzo de la lectura */
         try {
+            FileOutputStream streamOut = new FileOutputStream(destino);
+
             do {
                 // Operacion remota de lectura
                 byte[] bufferIn = remote.leer(fuente, totalBytesLeidos, VENTANA);
@@ -43,17 +42,12 @@ public class AskRemote {
                     bufferIn = new byte[bytesLeidos];
                     streamIn.get(bufferIn);
 
-                    // Concatena el buffer temporal con el contenido del archivo
+                    // Escribe en el archivo destino el contenido recibido
+                    streamOut.write(bufferIn);
                     totalBytesLeidos += bytesLeidos;
-                    contenidoArchivo = ByteBuffer.allocate(totalBytesLeidos).put(contenidoArchivo.array());
-                    contenidoArchivo.put(bufferIn);
                 }
 
             } while(bytesLeidos > 0);
-
-            // Se escribe el contenido recibido en el archivo destino
-            FileOutputStream streamOut = new FileOutputStream(destino);
-            streamOut.write(contenidoArchivo.array());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,21 +63,21 @@ public class AskRemote {
             File archivoFuente = new File(fuente);
             long tamanoArchivo = archivoFuente.length();
 
-            FileInputStream stream = new FileInputStream(fuente);
+            FileInputStream streamIn = new FileInputStream(fuente);
 
             byte[] bufferOut = new byte[VENTANA];
 
             do {
                 long bytesFaltantes = tamanoArchivo - totalBytesEscritos;
 
+                // Se calcula la cantidad de bytes a enviar
                 int cantidadEnviar = (bytesFaltantes < VENTANA) ? (int)bytesFaltantes : VENTANA;
 
-                stream.read(bufferOut);
+                // Se lee el archivo
+                streamIn.read(bufferOut);
 
-                int bytesEscritos = remote.escribir(destino, cantidadEnviar, bufferOut);
-
-                if (bytesEscritos > 0)
-                    totalBytesEscritos += bytesEscritos;
+                // Operacion remota de escritura
+                totalBytesEscritos = remote.escribir(destino, cantidadEnviar, bufferOut);                
 
             } while (totalBytesEscritos < tamanoArchivo);
 
@@ -115,7 +109,7 @@ public class AskRemote {
              */
             leer(archivoOriginal, copiaCliente);
 
-            /* Se escribe el archivo "copiaCliente" desde el cliente.
+            /* Se escribe el archivo "copiaCliente" desde el cliente
              * en el archivo "copiaServidor" del servidor.
              */
             escribir(copiaCliente, copiaServidor);
