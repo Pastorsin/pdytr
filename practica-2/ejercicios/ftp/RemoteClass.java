@@ -23,7 +23,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         super();
     }
 
-    public byte[] leer(String nombre, int posicion, int cantidadBytes) throws RemoteException {
+    public byte[] leer(String nombre, int posicion, int cantidadBytesEscritos) throws RemoteException {
         FileInputStream stream = null;
 
         int bytesLeidos = 0;
@@ -32,34 +32,29 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         ByteBuffer buffer = null;
 
         try {
-            stream = new FileInputStream("server/" + nombre);
-        } catch (FileNotFoundException e) {
-            System.err.println("El archivo no existe.");
-            e.printStackTrace();
-        }
+            stream = new FileInputStream(nombre);
 
-        try {
             System.out.println("Posicion: " + posicion);
-            System.out.println("Ventana: " + cantidadBytes);
+            System.out.println("Ventana: " + cantidadBytesEscritos);
 
             // Se lee el archivo
-            contenidoArchivo = new byte[cantidadBytes];
+            contenidoArchivo = new byte[cantidadBytesEscritos];
             stream.skip(posicion);
-            bytesLeidos = stream.read(contenidoArchivo, 0, cantidadBytes);
+            bytesLeidos = stream.read(contenidoArchivo, 0, cantidadBytesEscritos);
 
             System.out.println("Bytes leidos: " + bytesLeidos);
             System.out.println("----");
 
             /* Aloca el tamano para la cantidad de bytes leidos
             y la longitud del contenido del archivo */
-            buffer = ByteBuffer.allocate(cantidadBytes + 4);
+            buffer = ByteBuffer.allocate(cantidadBytesEscritos + 4);
 
             // En los primeros 4 bytes se colocan la cantidad de bytes leidos
             buffer.putInt(bytesLeidos);
             // En los siguientes bytes se coloca el contenido del archivo
             buffer.put(contenidoArchivo);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -67,22 +62,30 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
     }
 
     public int escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException {
-       	FileOutputStream stream = null;
+        FileOutputStream stream = null;
+        int cantidadBytesEscritos = 0;
 
-       	try {
-       		//vemos si el archivo ya existe
-       		File archivo = new File("server/" + nombre);
-    		Boolean existeArchivo = archivo.exists();
+        try {
+            File archivo = new File(nombre);
 
-    		//escribimos en el archivo
-            stream = new FileOutputStream("server/" + nombre, existeArchivo);
-            stream.write(data,0,cantidadBytes);
+            // Vemos si el archivo ya existe
+            Boolean existeArchivo = archivo.exists();
+
+            /* Si el archivo existe entonces abre el contenido sin sobreescribir
+            Si el archivo no existe entonces se lo crea */
+            stream = new FileOutputStream(archivo, existeArchivo);
+
+            // Escribimos en el archivo
+            stream.write(data, 0, cantidadBytes);
+            cantidadBytesEscritos = cantidadBytes;
+
+            // Cerramos el stream de datos
+            stream.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("");
-        return 1;
+        return cantidadBytesEscritos;
     }
 }
