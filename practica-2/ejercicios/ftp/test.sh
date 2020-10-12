@@ -22,7 +22,10 @@ java StartRemoteObject > /dev/null &
 REMOTE_OBJECT_PID=$!
 
 # Espera a que el objeto remoto sea iniciado
-sleep 2
+while [ $(ss -ta | grep -v TIME-WAIT | grep ":rmiregistry" | wc -l) -ne 3 ]; do
+	echo "INFO - Esperando objeto remoto"
+	sleep 1
+done
 
 # Ubicacion de los archivos
 ORIGINAL="database/server/originales/$1"
