@@ -22,7 +22,7 @@ java StartRemoteObject > /dev/null &
 REMOTE_OBJECT_PID=$!
 
 # Espera a que el objeto remoto sea iniciado
-while [ $(ss -ta | grep -v TIME-WAIT | grep ":rmiregistry" | wc -l) -ne 3 ]; do
+until [ $(ss -ta | grep -v TIME-WAIT | grep ":rmiregistry" | wc -l) -ge 3 ]; do
 	echo "INFO - Esperando objeto remoto"
 	sleep 1
 done
