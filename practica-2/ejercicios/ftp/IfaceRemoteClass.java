@@ -13,4 +13,6 @@ public interface IfaceRemoteClass extends Remote {
     public byte[] leer(String nombre, int posicion, int cantidadBytes) throws RemoteException;
 
     public long escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException;
+
+    public void invocacion() throws RemoteException;
 }

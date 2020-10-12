@@ -84,4 +84,12 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
 
         return archivo.length();
     }
+
+    public void invocacion() throws RemoteException {
+        try {
+            Thread.sleep(2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

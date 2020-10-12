@@ -144,6 +144,13 @@ public class AskRemote {
                 break;
 
             case "-ejercicio5":
+                /* Experimento del ejercicio 5.
+                 * Toma el tiempo minimo de una invocacion RMI
+                 */
+
+                long startTime = System.currentTimeMillis();
+                remote.invocacion();
+                System.out.println(System.currentTimeMillis() - startTime);
                 break;
 
             default:

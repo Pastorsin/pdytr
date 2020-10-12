@@ -13,7 +13,7 @@ ARCHIVO_CLIENTE2="../ftp/database/client/experimentos/experimento2.txt"
 echo "INFO - Experimento iniciado"
 
 # Se limpia el archivo de output
-echo "" > $OUTPUT
+cat /dev/null > $OUTPUT
 
 # Se generan los 10 experimentos
 for (( i = 0; i < $TIMES; i++ )); do
