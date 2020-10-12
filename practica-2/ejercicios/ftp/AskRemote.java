@@ -77,7 +77,7 @@ public class AskRemote {
                 streamIn.read(bufferOut);
 
                 // Operacion remota de escritura
-                totalBytesEscritos = remote.escribir(destino, cantidadEnviar, bufferOut);                
+                totalBytesEscritos = remote.escribir(destino, cantidadEnviar, bufferOut);
 
             } while (totalBytesEscritos < tamanoArchivo);
 
@@ -88,31 +88,69 @@ public class AskRemote {
 
     public static void main(String[] args) {
 
-        /* Verificacion de los parametros */
-        if (args.length != 3) {
-            System.err.println("Se necesitan 3 argumentos: archivo_original copia_cliente copia_servidor");
-            System.exit(1);
-        }
 
         try {
             /* Binding con el remoto */
             String rname = "//localhost:" + Registry.REGISTRY_PORT + "/remote";
             remote = (IfaceRemoteClass) Naming.lookup(rname);
 
-            /* Operaciones de escritura - lectura */
-            String archivoOriginal = args[0];
-            String copiaCliente = args[1];
-            String copiaServidor = args[2];
+            String operacion = args[0];
 
-            /* Se lee el archivo original desde el servidor y
-             * se guarda en el archivo "copiaCliente" en el cliente.
-             */
-            leer(archivoOriginal, copiaCliente);
+            switch (operacion) {
+            case "-ejercicio3" :
+                /* Verificacion de los parametros */
+                if (args.length != 4) {
+                    System.err.println("Se necesitan 3 argumentos:");
+                    System.err.println("java AskRemote -ejercicio3 archivo_original copia_cliente copia_servidor");
 
-            /* Se escribe el archivo "copiaCliente" desde el cliente
-             * en el archivo "copiaServidor" del servidor.
-             */
-            escribir(copiaCliente, copiaServidor);
+                    System.exit(1);
+                }
+
+                /* Operaciones de escritura - lectura */
+                String archivoOriginal = args[1];
+                String copiaCliente = args[2];
+                String copiaServidor = args[3];
+
+                /* Se lee el archivo original desde el servidor y
+                 * se guarda en el archivo "copiaCliente" en el cliente.
+                 */
+                leer(archivoOriginal, copiaCliente);
+
+                /* Se escribe el archivo "copiaCliente" desde el cliente
+                 * en el archivo "copiaServidor" del servidor.
+                 */
+                escribir(copiaCliente, copiaServidor);
+                break;
+
+            case "-ejercicio4" :
+                /* Experimento del ejercicio 4.
+                 * Escribe el archivo fuente en el archivo destino del servidor.
+                 * La idea es que se ejecuten N clientes en paralelo ejecutando
+                 * con el mismo nombre del archivo fuente.
+                 */
+                if (args.length != 3) {
+                    System.err.println("Se necesitan 2 argumentos:");
+                    System.err.println("java AskRemote -ejercicio4 archivo_fuente archivo_destino");
+
+                    System.exit(1);
+                }
+
+                VENTANA = 2;
+
+                String fuente = args[1];
+                String destino = args[2];
+
+                escribir(fuente, destino);
+                break;
+
+            case "-ejercicio5":
+                break;
+
+            default:
+                System.err.println("Operacion invalida");
+                System.err.println("Especificar: -operacion parametros_de_la_operacion");
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
