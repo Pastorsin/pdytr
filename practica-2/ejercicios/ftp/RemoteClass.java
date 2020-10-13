@@ -86,11 +86,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
     }
 
     public void invocacion() throws RemoteException {
-        try {
-            Thread.sleep(2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        
     }
 
     public void infiniteLoop() throws RemoteException {
