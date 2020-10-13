@@ -160,7 +160,7 @@ public class AskRemote {
                 try{
                     remote.infiniteLoop();
                 }catch (RemoteException e){
-                    System.err.println("Tiempo de espera de respuesta agotado");
+                    System.err.println("ERROR - Tiempo de espera de respuesta agotado");
                 }   
                 break;
 
