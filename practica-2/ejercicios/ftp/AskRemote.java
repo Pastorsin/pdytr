@@ -7,11 +7,11 @@ import java.rmi.Naming; /* lookup */
 import java.rmi.registry.Registry; /* REGISTRY_PORT */
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.nio.ByteBuffer;
-
 import java.rmi.RemoteException;
 
 public class AskRemote {
@@ -151,6 +151,17 @@ public class AskRemote {
                 long startTime = System.currentTimeMillis();
                 remote.invocacion();
                 System.out.println(System.currentTimeMillis() - startTime);
+                break;
+            case "-ejercicio5b":
+                /* Experimento del ejercicio 5b.
+                * Se realiza una consulta al servidor, la cual
+                * nunca sera respondida.
+                */
+                try{
+                    remote.infiniteLoop();
+                }catch (RemoteException e){
+                    System.err.println("Tiempo de espera de respuesta agotado");
+                }   
                 break;
 
             default:

@@ -15,4 +15,6 @@ public interface IfaceRemoteClass extends Remote {
     public long escribir(String nombre, int cantidadBytes, byte[] data) throws RemoteException;
 
     public void invocacion() throws RemoteException;
+
+     public void infiniteLoop() throws RemoteException;
 }

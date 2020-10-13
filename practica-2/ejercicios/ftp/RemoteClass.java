@@ -92,4 +92,15 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
             e.printStackTrace();
         }
     }
+
+    public void infiniteLoop() throws RemoteException {
+        try {
+            System.out.println("Se conecta el cliente");
+            while (true){
+
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
