@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUTPUT="../outputs/ejercicio-5a.csv"
+OUTPUT="../outputs/ejercicio-5a-demo.csv"
 TIMES=100
 
 # Inicia el entorno
