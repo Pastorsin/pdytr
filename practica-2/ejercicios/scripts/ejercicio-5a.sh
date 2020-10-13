@@ -1,14 +1,16 @@
 #!/bin/bash
 
-OUTPUT="../outputs/ejercicio-5.csv"
+OUTPUT="../outputs/ejercicio-5a.csv"
 TIMES=100
 
 # Inicia el entorno
 ./entorno.sh -start
 
+# Se limpia el output
+echo "Time in ns" > $OUTPUT
+
 for (( i = 0; i < $TIMES; i++ )); do
-	echo "Time in ms," > $OUTPUT
-	java -cp "../ftp" AskRemote -ejercicio5 >> $OUTPUT
+	java -cp "../ftp" AskRemote -ejercicio5a >> $OUTPUT
 	echo "Tiempo de la ejecución $i finalizado"
 done
 
