@@ -19,6 +19,8 @@ import java.nio.ByteBuffer;
 
 /* This class implements the interface with remote methods */
 public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass {
+    public static int PROCESAMIENTO = 1000;
+
     protected RemoteClass() throws RemoteException {
         super();
     }
@@ -85,17 +87,27 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         return archivo.length();
     }
 
-    public void invocacion() throws RemoteException {
-        
+    public int invocacion() throws RemoteException {
+        /* Simula el procesamiento del servidor.
+         * Retorna cuanto tardo en MILISEGUNDOS
+         */
+        try {
+            Thread.sleep(PROCESAMIENTO);
+
+            return PROCESAMIENTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     public void infiniteLoop() throws RemoteException {
         try {
             System.out.println("Se conecta el cliente");
-            while (true){
-
+            while (true) {
+                Thread.sleep(1);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

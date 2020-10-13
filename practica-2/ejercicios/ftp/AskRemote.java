@@ -144,24 +144,39 @@ public class AskRemote {
                 break;
 
             case "-ejercicio5a":
-                /* Experimento del ejercicio 5.
-                 * Toma el tiempo minimo de una invocacion RMI
+                /* Experimento del ejercicio 5a.
+                 * Toma el tiempo minimo de respuesta de una invocacion RMI
                  */
+                long tiempoComienzo, tiempoInvocacion, procesamiento, tiempoRespuesta;
 
-                long startTime = System.nanoTime();
-                remote.invocacion();
-                System.out.println(System.nanoTime() - startTime);
+                tiempoComienzo = System.nanoTime();
+                procesamiento = remote.invocacion();
+                tiempoInvocacion = (System.nanoTime() - tiempoComienzo);
+
+                if (procesamiento != -1) {
+                    // Convierte el tiempo de procesamiento a nanosegundos
+                    procesamiento *= 1000000;
+
+                    // Calcula el tiempo de respuesta
+                    tiempoRespuesta = (tiempoInvocacion - procesamiento) / 2;
+
+                    // Da como salida el tiempo de respuesta
+                    System.out.println(tiempoRespuesta);
+                } else {
+                    System.err.println("ERROR - Hubo un error en el servidor, se descarta la medicion.");
+                }
+
                 break;
             case "-ejercicio5b":
                 /* Experimento del ejercicio 5b.
                 * Se realiza una consulta al servidor, la cual
                 * nunca sera respondida.
                 */
-                try{
+                try {
                     remote.infiniteLoop();
-                }catch (RemoteException e){
+                } catch (RemoteException e) {
                     System.err.println("ERROR - Tiempo de espera de respuesta agotado");
-                }   
+                }
                 break;
 
             default:

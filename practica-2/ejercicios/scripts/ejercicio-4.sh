@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TIMES=10
-OUTPUT="../outputs/ejercicio-4-demo"
+OUTPUT="../outputs/ejercicio-4-test"
 
 ARCHIVO_SERVER="../ftp/database/server/experimentos/experimento.txt"
 ARCHIVO_CLIENTE1="../ftp/database/client/experimentos/experimento1.txt"
