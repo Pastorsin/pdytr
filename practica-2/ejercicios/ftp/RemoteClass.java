@@ -87,18 +87,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         return archivo.length();
     }
 
-    public int invocacion() throws RemoteException {
-        /* Simula el procesamiento del servidor.
-         * Retorna cuanto tardo en MILISEGUNDOS
-         */
-        try {
-            Thread.sleep(PROCESAMIENTO);
-
-            return PROCESAMIENTO;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+    public void invocacion() throws RemoteException {
     }
 
     public void infiniteLoop() throws RemoteException {
