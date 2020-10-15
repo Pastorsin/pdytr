@@ -17,9 +17,6 @@ cat /dev/null > $OUTPUT
 
 # Se generan los 10 experimentos
 for (( i = 0; i < $TIMES; i++ )); do
-	# Si el archivo existe en el servidor lo elimina
-	[[ -f $ARCHIVO_SERVER ]] && rm $ARCHIVO_SERVER
-
 	# Ejecutamos los 2 clientes
 	java -cp "../ftp" AskRemote -ejercicio4 $ARCHIVO_CLIENTE1 $ARCHIVO_SERVER &
 	CLIENT_1_PID=$!

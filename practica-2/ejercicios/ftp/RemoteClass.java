@@ -36,16 +36,10 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         try {
             stream = new FileInputStream(nombre);
 
-            System.out.println("Posicion: " + posicion);
-            System.out.println("Ventana: " + cantidadBytesEscritos);
-
             // Se lee el archivo
             contenidoArchivo = new byte[cantidadBytesEscritos];
             stream.skip(posicion);
             bytesLeidos = stream.read(contenidoArchivo, 0, cantidadBytesEscritos);
-
-            System.out.println("Bytes leidos: " + bytesLeidos);
-            System.out.println("----");
 
             /* Aloca el tamano para la cantidad de bytes leidos
             y la longitud del contenido del archivo */
@@ -70,12 +64,19 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         try {
             archivo = new File(nombre);
 
-            /* Si el archivo existe entonces abre el contenido sin sobreescribir
-            Si el archivo no existe entonces se lo crea */
-            stream = new FileOutputStream(archivo, archivo.exists());
+            /*
+             * Si se manda como cantidad de bytes -1 entonces se elimina el
+             * contenido del archivo para escribirlo desde 0, caso contrario
+             * se agrega el contenido al final.
+             */
+            if (cantidadBytes == -1) {
+                stream = new FileOutputStream(archivo);
+            } else {
+                stream = new FileOutputStream(archivo, true);
 
-            // Escribimos en el archivo
-            stream.write(data, 0, cantidadBytes);
+                // Escribimos en el archivo
+                stream.write(data, 0, cantidadBytes);
+            }
 
             // Cerramos el stream de datos
             stream.close();
@@ -94,7 +95,6 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         try {
             System.out.println("Se conecta el cliente");
             while (true) {
-                Thread.sleep(1);
             }
         } catch (Exception e) {
             e.printStackTrace();

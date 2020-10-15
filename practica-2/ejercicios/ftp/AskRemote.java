@@ -60,12 +60,21 @@ public class AskRemote {
         long totalBytesEscritos = 0;
 
         try {
+            byte[] bufferOut = new byte[VENTANA];
+
+            /*
+             * Se elige hacer una escritura destructiva, para ello se manda -1
+             * como cantidad de bytes
+             */
+            remote.escribir(destino, -1, bufferOut);
+
+            /*
+             * Se comienza a escribir el archivo al final
+             */
             File archivoFuente = new File(fuente);
             long tamanoArchivo = archivoFuente.length();
 
             FileInputStream streamIn = new FileInputStream(fuente);
-
-            byte[] bufferOut = new byte[VENTANA];
 
             do {
                 long bytesFaltantes = tamanoArchivo - totalBytesEscritos;

@@ -14,10 +14,6 @@ ORIGINAL="../ftp/database/server/originales/$1"
 COPIA_CLIENTE="../ftp/database/client/copias/$1"
 COPIA_SERVIDOR="../ftp/database/server/copias/$1"
 
-# Elimina las copias si existen
-[[ -f $COPIA_CLIENTE ]] && rm $COPIA_CLIENTE
-[[ -f $COPIA_SERVIDOR ]] && rm $COPIA_SERVIDOR
-
 # Inicia el cliente
 echo "INFO - Lanzando cliente"
 java -cp "../ftp" AskRemote -ejercicio3 $ORIGINAL $COPIA_CLIENTE $COPIA_SERVIDOR
