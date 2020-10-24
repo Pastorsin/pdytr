@@ -3,5 +3,9 @@
 *.rar
 *.out
 *.o
+
 # Copias de la práctica 2 para el ejercicio 3b
 practica-2/ejercicios/ftp/database/*/copias/*
+
+# Targets de Maven para práctica 3
+target
