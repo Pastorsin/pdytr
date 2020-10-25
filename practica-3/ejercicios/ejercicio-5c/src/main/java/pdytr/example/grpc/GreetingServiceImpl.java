@@ -15,7 +15,8 @@ public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImpl
                 .build();
 
         // System.exit(77);
-        while (true) {
+        boolean ok = true;
+        while (ok) {
 
         }
 
