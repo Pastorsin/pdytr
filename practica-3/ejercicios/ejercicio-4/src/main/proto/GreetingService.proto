@@ -1,0 +1,32 @@
+syntax = "proto3";
+package pdytr.example.grpc;
+
+message LecturaRequest {
+  string nombre = 1;
+  int32 posicion = 2;
+  int32 offset = 3;
+}
+
+message LecturaResponse {
+  bytes contenido = 1;
+  int32 bytesLeidos = 2;
+}
+
+message EscrituraRequest {
+	string nombre = 1;
+	int32 offset = 2;
+	bytes contenido = 3;
+	bool destructiva = 4;
+}
+
+message EscrituraResponse {
+	int64 bytesEscritos = 1;
+}
+
+
+service GreetingService {
+   rpc leer(LecturaRequest) returns (LecturaResponse);
+   rpc escribir(EscrituraRequest) returns (EscrituraResponse);
+}
+
+

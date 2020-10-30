@@ -3,6 +3,7 @@
 *.rar
 *.out
 *.o
+*.mp4
 
 # Copias de la práctica 2 para el ejercicio 3b
 practica-2/ejercicios/ftp/database/*/copias/*
