@@ -6,10 +6,10 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
 
-import pdytr.example.grpc.GreetingServiceOuterClass.*;
+import pdytr.example.grpc.FtpOuterClass.*;
 
 
-public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImplBase {
+public class Ftp extends FtpGrpc.FtpImplBase {
     @Override
     public void leer(LecturaRequest request, StreamObserver<LecturaResponse> responseObserver) {
         System.out.println(request);

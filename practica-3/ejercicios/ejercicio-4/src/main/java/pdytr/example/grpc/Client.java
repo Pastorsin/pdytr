@@ -12,14 +12,19 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
-import pdytr.example.grpc.GreetingServiceOuterClass.*;
+import pdytr.example.grpc.FtpOuterClass.*;
+import pdytr.example.grpc.FtpGrpc.*;
+import static pdytr.example.grpc.FtpGrpc.newBlockingStub;
+
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
 
 public class Client {
 
     private static final int VENTANA = 1024;
 
-    private static void leer(GreetingServiceGrpc.GreetingServiceBlockingStub stub, String path_servidor, String path_cliente) {
+    private static void leer(FtpBlockingStub stub, String path_servidor, String path_cliente) {
         try {
             int totalBytesLeidos = 0;
             int bytesLeidos = 0;
@@ -36,9 +41,9 @@ public class Client {
                 LecturaResponse response = stub.leer(request);
 
                 bytesLeidos = response.getBytesLeidos();
-                System.out.println("Bytes leidos: " + bytesLeidos);
 
                 if (bytesLeidos > 0) {
+                    System.out.println("Bytes leidos: " + bytesLeidos);
 
                     byte[] contenido = response.getContenido().toByteArray();
                     fo.write(contenido, 0, bytesLeidos);
@@ -54,7 +59,7 @@ public class Client {
         }
     }
 
-    private static void escribir(GreetingServiceGrpc.GreetingServiceBlockingStub stub, String path_servidor, String path_cliente) {
+    private static void escribir(FtpBlockingStub stub, String path_servidor, String path_cliente) {
         try {
             File archivo = new File(path_cliente);
             FileInputStream fi = new FileInputStream(archivo);
@@ -93,6 +98,34 @@ public class Client {
         }
     }
 
+    public static String diff(String path_servidor, String path_cliente) {
+        String salida = "";
+
+        try {
+            String cmd = String.format("diff %s %s", path_servidor, path_cliente);
+
+            System.out.println(cmd);
+
+            Process proc = Runtime.getRuntime().exec(cmd);
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(proc.getInputStream()));
+
+            String line = "";
+
+            while ((line = reader.readLine()) != null) {
+                salida += line;
+            }
+
+        }   catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return salida;
+
+    }
+
+
+
     public static void main( String[] args ) throws Exception {
         if (args.length != 3) {
             System.err.println("Se necesitan 2 argumentos:");
@@ -106,7 +139,7 @@ public class Client {
                                        .usePlaintext(true)
                                        .build();
 
-        GreetingServiceGrpc.GreetingServiceBlockingStub stub = GreetingServiceGrpc.newBlockingStub(channel);
+        FtpBlockingStub stub = newBlockingStub(channel);
 
         String operacion = args[0];
         String path_servidor = args[1];
@@ -126,7 +159,17 @@ public class Client {
         }
 
         System.out.println("Transferencia finalizada");
-        System.out.printf("diff %s %s\n", path_servidor, path_cliente);
+
+        System.out.println("---");
+
+        String salida = diff(path_servidor, path_cliente);
+
+        if (salida == "") {
+            System.out.println("OK - Archivos sin diferencias");
+        } else {
+            System.err.println("ERROR - Archivos con diferencias");
+            System.err.println(salida);
+        };
 
         channel.shutdownNow();
 
