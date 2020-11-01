@@ -7,7 +7,7 @@ TIMES=10
 echo "Time in ns" > $OUTPUT
 
 # Se posiciona en el directorio del ejercicio
-cd "/pdytr/practica-3/ejercicios/ejercicio-5a"
+cd "../ejercicio-5a"
 
 # Ejecuta el servidor
 mvn -DskipTests package exec:java -Dexec.mainClass=pdytr.example.grpc.App &

@@ -22,7 +22,7 @@ import java.io.BufferedReader;
 
 public class Client {
 
-    private static final int VENTANA = 1024;
+    private static int VENTANA;
 
     private static void leer(FtpBlockingStub stub, String path_servidor, String path_cliente) {
         try {
@@ -127,20 +127,31 @@ public class Client {
 
 
     public static void main( String[] args ) throws Exception {
-        if (args.length != 3) {
-            System.err.println("Se necesitan 2 argumentos:");
-            System.err.println("[-leer|-escribir] path_servidor path_cliente");
+        /* Verificacion de argumentos */
+        if (args.length != 4) {
+            System.err.println("Se necesitan 4 argumentos:");
+            System.err.println("[-leer|-escribir] path_servidor path_cliente ventana");
 
             System.exit(1);
         }
 
+        Integer ventana = new Integer(args[3]);
 
+        if (ventana <= 0) {
+            System.err.println("La ventana debe ser mayor a 0");
+            System.exit(1);
+        } else {
+            VENTANA = ventana;
+        }
+
+        /* Apertura del canal */
         final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:8080")
                                        .usePlaintext(true)
                                        .build();
 
         FtpBlockingStub stub = newBlockingStub(channel);
 
+        /* Operaciones de FTP */
         String operacion = args[0];
         String path_servidor = args[1];
         String path_cliente = args[2];
@@ -159,9 +170,9 @@ public class Client {
         }
 
         System.out.println("Transferencia finalizada");
-
         System.out.println("---");
 
+        /* Test de la operacion */
         String salida = diff(path_servidor, path_cliente);
 
         if (salida == "") {
@@ -171,6 +182,7 @@ public class Client {
             System.err.println(salida);
         };
 
+        /* Cierre del canal */
         channel.shutdownNow();
 
         System.exit(0);
