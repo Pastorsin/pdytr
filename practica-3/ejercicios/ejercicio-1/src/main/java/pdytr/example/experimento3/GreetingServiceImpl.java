@@ -1,5 +1,6 @@
-package pdytr.example.grpc;
+package pdytr.example.experimento3;
 
+import pdytr.example.experimentos.*;
 import io.grpc.stub.StreamObserver;
 
 public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImplBase {
@@ -14,12 +15,18 @@ public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImpl
                 .setGreeting("Hello there, " + request.getName())
                 .build();
 
-        System.exit(77);
+        try {
+            Thread.sleep(6000);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         
         // Use responseObserver to send a single response back
         responseObserver.onNext(response);
 
         // When you are done, you must call onCompleted.
         responseObserver.onCompleted();
+
+        System.out.println("Respuesta enviada");
     }
 }

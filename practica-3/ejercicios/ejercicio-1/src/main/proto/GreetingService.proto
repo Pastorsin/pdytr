@@ -1,5 +1,5 @@
 syntax = "proto3";
-package pdytr.example.grpc;
+package pdytr.example.experimentos;
 
 // Request payload
 message HelloRequest {
@@ -23,7 +23,6 @@ message HelloResponse {
 // Defining a Service, a Service can have multiple RPC operations
 service GreetingService {
   // Define a RPC operation
-   //rpc greeting(HelloRequest) returns (stream HelloResponse);
    rpc greeting(HelloRequest) returns (HelloResponse);
 }
 

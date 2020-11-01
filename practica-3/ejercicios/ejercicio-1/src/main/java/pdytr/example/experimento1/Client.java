@@ -1,7 +1,8 @@
-package pdytr.example.grpc;
-import io.grpc.*;
+package pdytr.example.experimento1;
 
 import io.grpc.*;
+import pdytr.example.experimentos.*;
+
 
 public class Client {
     public static void main( String[] args ) throws Exception {
