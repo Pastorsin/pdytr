@@ -7,6 +7,14 @@ public class Client
 {
     public static void main( String[] args ) throws Exception
     {
+      if (args.length != 1) {
+        System.err.println("Se necesitan 1 argumentos:");
+        System.err.println("Seleccionar accion: [ -time | -ejercicio5a | -ejercicio5b ]");
+        System.exit(1);
+      }
+      
+      Integer deadline = new Integer(args[0]);
+
       // Channel is the abstraction to connect to a service endpoint
       // Let's use plaintext communication because we don't have certs
       final ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:8080")
@@ -27,7 +35,7 @@ public class Client
       long startTime = System.currentTimeMillis();
 
       GreetingServiceOuterClass.HelloResponse response = 
-        stub.withDeadlineAfter(497, TimeUnit.MILLISECONDS).greeting(request);
+        stub.withDeadlineAfter(deadline, TimeUnit.MILLISECONDS).greeting(request);
       
       System.out.println(System.currentTimeMillis() - startTime);
 
