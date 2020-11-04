@@ -10,3 +10,6 @@ practica-2/ejercicios/ftp/database/*/copias/*
 
 # Targets de Maven para práctica 3
 target
+
+# Outputs de scripts
+practica-3/ejercicios/outputs/

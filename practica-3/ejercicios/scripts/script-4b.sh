@@ -26,7 +26,7 @@ done
 
 # La opcion -q muestra solo excepciones y outputs del .java
 for (( i = 0; i < $TIMES; i++ )); do
-        mvn -DskipTests exec:java -Dexec.mainClass=pdytr.example.grpc.Client -Dexec.args="-escribir ${ARCHIVO_SERVER} ${ARCHIVO_CLIENTE1} ${VENTANA}" -q & 
+            mvn -DskipTests exec:java -Dexec.mainClass=pdytr.example.grpc.Client -Dexec.args="-escribir ${ARCHIVO_SERVER} ${ARCHIVO_CLIENTE1} ${VENTANA}" -q & 
             CLIENT_1_PID=$!
 
             mvn -DskipTests exec:java -Dexec.mainClass=pdytr.example.grpc.Client -Dexec.args="-escribir ${ARCHIVO_SERVER} ${ARCHIVO_CLIENTE2} ${VENTANA}" -q & 
