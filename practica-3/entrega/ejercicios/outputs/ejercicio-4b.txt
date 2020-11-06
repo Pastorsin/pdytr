@@ -1,0 +1,31 @@
+Resultados
+------------------
+Ejecución 0: 
+aabababbababaabbaabaab
+------------------
+Ejecución 1: 
+aaaaaaaaaaaaaaaaaaaa
+------------------
+Ejecución 2: 
+aaaaaaaaaaaaaaaaaaaa
+------------------
+Ejecución 3: 
+bbbbbbbbbbbbbbbbbbbb
+------------------
+Ejecución 4: 
+baaaaabababa bbbbbbbb
+------------------
+Ejecución 5: 
+bbbbbbbbbbbbbbbbbbbb
+------------------
+Ejecución 6: 
+aaaaaaaaaaaaaaaaaaaa
+------------------
+Ejecución 7: 
+abbbbaababababbabababa
+------------------
+Ejecución 8: 
+aaaaaaaaaaaaaaaaaaaa
+------------------
+Ejecución 9: 
+baaaabaabbaabaabbababa
