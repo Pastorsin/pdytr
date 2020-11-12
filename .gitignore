@@ -11,3 +11,8 @@ practica-2/ejercicios/ftp/database/*/copias/*
 # Targets de Maven para práctica 3
 target
 
+# JADE para la práctica 4
+bin
+JADE-all-4.3.2
+APDescription.txt
+MTPs-Main-Container.txt
