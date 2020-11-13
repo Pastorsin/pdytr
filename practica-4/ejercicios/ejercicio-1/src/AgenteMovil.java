@@ -3,11 +3,6 @@ import jade.wrapper.*;
 
 import java.util.*;
 
-import java.lang.management.ManagementFactory;
-import com.sun.management.OperatingSystemMXBean;
-import java.net.*;
-import java.io.Serializable;
-
 
 public class AgenteMovil extends Agent {
     private String[] computadorasAdicionales = {
@@ -43,28 +38,6 @@ public class AgenteMovil extends Agent {
         info.add(new Informacion(here().getName()));
     }
 
-    private void logearInformacion() {
-        // Limpiar output
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-
-        // Encabezados
-        System.out.printf("%-20s %-10s %-10s\n",
-                          "NOMBRE", "CPU USADO",
-                          "MEMORIA DISPONIBLE");
-
-        // Contenido
-        for (Informacion i : info)
-            System.out.println(i.toString());
-
-        System.out.println("-----------------");
-        System.out.printf("TIEMPO DE RECOLECCION: %d ms.\n", tiempoDeRecoleccion);
-        System.out.println("-----------------");
-    }
-
-    private boolean esPcOrigen(int indice) {
-        return indice == (info.size() - 1);
-    }
 
     public void setup() {
         crearComputadoras();
@@ -79,6 +52,41 @@ public class AgenteMovil extends Agent {
         }
     }
 
+    private void logearInformacion() {
+        // Limpiar output
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        
+        // Encabezados
+        System.out.println("-----------------");
+        System.out.println("ORIGEN: " + here().getName());
+        System.out.printf("TIEMPO DE RECOLECCION: %d ms.\n", tiempoDeRecoleccion);
+        System.out.println("-----------------");
+
+        System.out.printf("%-20s %-10s %-10s\n",
+                          "NOMBRE", "CPU USADO",
+                          "MEMORIA DISPONIBLE");
+
+        // Contenido
+        for (Informacion i : info)
+            System.out.println(i.toString());
+
+    }
+
+    private boolean esPcOrigen(int indice) {
+        return indice == (info.size() - 1);
+    }
+
+    private void mover(int indice) {
+        String nombreContainer = info.get(actual).getContainer();
+        ContainerID destino = new ContainerID(nombreContainer, null);
+        doMove(destino);
+    }
+
+    private int siguiente(int indice) {
+        return (actual + 1) % info.size();
+    }
+
     protected void afterMove() {
         try {
 
@@ -91,45 +99,14 @@ public class AgenteMovil extends Agent {
                 tiempoInicial = System.currentTimeMillis();
             }
 
-            actual = (actual + 1) % info.size();
+            int siguiente = siguiente(actual);
 
-            String nombreContainer = info.get(actual).getContainer();
-            ContainerID destino = new ContainerID(nombreContainer, null);
-
-            doMove(destino);
+            actual = siguiente;
+            mover(siguiente);
 
         } catch (Exception e) {
             System.err.println("\n\n\nNo fue posible migrar el agente\n\n\n");
             e.printStackTrace();
         }
-    }
-
-    public static class Informacion implements Serializable {
-        private String container;
-        private double cpuUsado;
-        private long memoriaDisponible;
-
-        public Informacion(String container) {
-            this.container = container;
-        }
-
-        public void actualizar() throws Exception {
-            OperatingSystemMXBean bean = (OperatingSystemMXBean) ManagementFactory
-                                         .getOperatingSystemMXBean();
-
-            this.cpuUsado = bean.getSystemCpuLoad() * 100;
-            this.memoriaDisponible = bean.getFreePhysicalMemorySize();
-        }
-
-        public String getContainer() {
-            return container;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%-20s %-10.2f %d Bytes",
-                                 container, cpuUsado, memoriaDisponible);
-        }
-
     }
 }

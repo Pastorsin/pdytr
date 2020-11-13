@@ -6,7 +6,7 @@
 
 ## Compilación:
 `mkdir classes`  
-`javac -classpath bin/jade.jar -d classes src/AgenteMovil.java`
+`javac -cp bin/jade.jar:src -d classes src/AgenteMovil.java`
 
 ## Ejecución:
 ### Boot:
