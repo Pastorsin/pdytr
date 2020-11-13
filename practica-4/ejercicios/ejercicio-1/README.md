@@ -10,6 +10,6 @@
 
 ## Ejecución:
 ### Boot:
-`java -cp bin/jade.jar:classes jade.Boot -gui`
+`java -cp bin/jade.jar jade.Boot -gui`
 ### Agente:
 `java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil`
