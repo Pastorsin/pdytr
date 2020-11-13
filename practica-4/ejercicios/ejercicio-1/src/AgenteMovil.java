@@ -50,12 +50,12 @@ public class AgenteMovil extends Agent {
 
         // Encabezados
         System.out.printf("%-20s %-10s %-10s\n",
-                          "NOMBRE", "CPU USADO", 
+                          "NOMBRE", "CPU USADO",
                           "MEMORIA DISPONIBLE");
-        
+
         // Contenido
         for (Informacion i : info)
-            System.out.println(i.toString());        
+            System.out.println(i.toString());
 
         System.out.println("-----------------");
         System.out.printf("TIEMPO DE RECOLECCION: %d ms.\n", tiempoDeRecoleccion);
@@ -63,7 +63,7 @@ public class AgenteMovil extends Agent {
     }
 
     private boolean esPcOrigen(int indice) {
-        return indice == info.size() - 1;
+        return indice == (info.size() - 1);
     }
 
     public void setup() {
@@ -72,6 +72,7 @@ public class AgenteMovil extends Agent {
 
         try {
             ContainerID destino = new ContainerID(info.get(0).getContainer(), null);
+            tiempoInicial = System.currentTimeMillis();
             doMove(destino);
         } catch (Exception e) {
             System.out.println("\n\n\nNo fue posible migrar el agente\n\n\n");
@@ -83,7 +84,7 @@ public class AgenteMovil extends Agent {
 
             info.get(actual).actualizar();
 
-            if (esPcOrigen(actual)) { 
+            if (esPcOrigen(actual)) {
                 tiempoDeRecoleccion = System.currentTimeMillis() - tiempoInicial;
                 logearInformacion();
                 Thread.sleep(1000);
@@ -94,6 +95,7 @@ public class AgenteMovil extends Agent {
 
             String nombreContainer = info.get(actual).getContainer();
             ContainerID destino = new ContainerID(nombreContainer, null);
+
             doMove(destino);
 
         } catch (Exception e) {
