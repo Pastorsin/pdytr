@@ -1,76 +1,133 @@
 import jade.core.*;
 import jade.wrapper.*;
-import java.util.Arrays;
+
+import java.util.*;
+
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
+import java.net.*;
+import java.io.Serializable;
+
 
 public class AgenteMovil extends Agent {
-    private int i = 0;
-    private final String[] containers = {
+    private String[] computadorasAdicionales = {
         "PC-0",
         "PC-1",
         "PC-2",
         "PC-3"
     };
-    private long[] tiempos = new long[containers.length + 1];
 
-    private void createContainers() {
-        //Get the JADE runtime interface (singleton)
+    private int actual = 0;
+    private List<Informacion> info = new ArrayList<>();
+
+    private long tiempoInicial;
+    private long tiempoDeRecoleccion;
+
+    private void crearComputadoras() {
         jade.core.Runtime runtime = jade.core.Runtime.instance();
-        //Create a Profile, where the launch arguments are stored
-        for (String containerName : containers) {
+
+        for (String pc : computadorasAdicionales) {
             Profile profile = new ProfileImpl();
-            profile.setParameter(Profile.CONTAINER_NAME, containerName);
+            profile.setParameter(Profile.CONTAINER_NAME, pc);
             profile.setParameter(Profile.MAIN_HOST, "localhost");
-            //create a non-main agent container
             ContainerController container = runtime.createAgentContainer(profile);
         }
     }
 
-    // Ejecutado por unica vez en la creacion
+    private void inicializarInformacion() {
+        for (String pc : computadorasAdicionales)
+            info.add(new Informacion(pc));
+
+        info.add(new Informacion("Main-Container"));
+
+        info.add(new Informacion(here().getName()));
+    }
+
+    private void logearInformacion() {
+        // Limpiar output
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+
+        // Encabezados
+        System.out.printf("%-20s %-10s %-10s\n",
+                          "NOMBRE", "CPU USADO", 
+                          "MEMORIA DISPONIBLE");
+        
+        // Contenido
+        for (Informacion i : info)
+            System.out.println(i.toString());        
+
+        System.out.println("-----------------");
+        System.out.printf("TIEMPO DE RECOLECCION: %d ms.\n", tiempoDeRecoleccion);
+        System.out.println("-----------------");
+    }
+
+    private boolean esPcOrigen(int indice) {
+        return indice == info.size() - 1;
+    }
+
     public void setup() {
-        createContainers();
+        crearComputadoras();
+        inicializarInformacion();
 
-        Location origen = here();
-        System.out.println("\n\nHola, agente con nombre local " + getLocalName());
-        System.out.println("Y nombre completo... " + getName());
-        System.out.println("Y en location " + origen.getID() + "\n\n");
-        // Para migrar el agente
         try {
-            ContainerID destino = new ContainerID(containers[0], null);
-            System.out.println("Migrando el agente a " + destino.getID());
-
-
+            ContainerID destino = new ContainerID(info.get(0).getContainer(), null);
             doMove(destino);
         } catch (Exception e) {
             System.out.println("\n\n\nNo fue posible migrar el agente\n\n\n");
         }
     }
 
-    // Ejecutado al llegar a un contenedor como resultado de una migracion
     protected void afterMove() {
         try {
-            long inicio = System.currentTimeMillis();
 
-            Thread.sleep(2000);
+            info.get(actual).actualizar();
 
-            tiempos[i] = System.currentTimeMillis() - inicio;
-
-            String nombreOrigen = here().getName();
-
-            System.out.println(nombreOrigen + " - " + tiempos[i] + "ms.");
-
-            // Para migrar el agente
-            if (!nombreOrigen.equals("Main-Container")) {
-                i++;
-                String containerName = (i == containers.length) ? "Main-Container" : containers[i];
-                ContainerID destino = new ContainerID(containerName, null);
-                doMove(destino);
-            } else {                
-                long total = Arrays.stream(tiempos).sum();                
-                System.out.println("Tiempo del recorrido " + total + " ms.");
+            if (esPcOrigen(actual)) { 
+                tiempoDeRecoleccion = System.currentTimeMillis() - tiempoInicial;
+                logearInformacion();
+                Thread.sleep(1000);
+                tiempoInicial = System.currentTimeMillis();
             }
+
+            actual = (actual + 1) % info.size();
+
+            String nombreContainer = info.get(actual).getContainer();
+            ContainerID destino = new ContainerID(nombreContainer, null);
+            doMove(destino);
+
         } catch (Exception e) {
             System.err.println("\n\n\nNo fue posible migrar el agente\n\n\n");
             e.printStackTrace();
         }
+    }
+
+    public static class Informacion implements Serializable {
+        private String container;
+        private double cpuUsado;
+        private long memoriaDisponible;
+
+        public Informacion(String container) {
+            this.container = container;
+        }
+
+        public void actualizar() throws Exception {
+            OperatingSystemMXBean bean = (OperatingSystemMXBean) ManagementFactory
+                                         .getOperatingSystemMXBean();
+
+            this.cpuUsado = bean.getSystemCpuLoad() * 100;
+            this.memoriaDisponible = bean.getFreePhysicalMemorySize();
+        }
+
+        public String getContainer() {
+            return container;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%-20s %-10.2f %d Bytes",
+                                 container, cpuUsado, memoriaDisponible);
+        }
+
     }
 }
