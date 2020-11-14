@@ -5,7 +5,7 @@ import java.util.*;
 
 
 public class AgenteMovil extends Agent {
-    private String[] computadorasAdicionales = {
+    private final String[] COMPUTADORAS_ADICIONALES = {
         "PC-0",
         "PC-1",
         "PC-2",
@@ -21,7 +21,7 @@ public class AgenteMovil extends Agent {
     private void crearComputadoras() {
         jade.core.Runtime runtime = jade.core.Runtime.instance();
 
-        for (String pc : computadorasAdicionales) {
+        for (String pc : COMPUTADORAS_ADICIONALES) {
             Profile profile = new ProfileImpl();
             profile.setParameter(Profile.CONTAINER_NAME, pc);
             profile.setParameter(Profile.MAIN_HOST, "localhost");
@@ -30,25 +30,29 @@ public class AgenteMovil extends Agent {
     }
 
     private void inicializarInformacion() {
-        for (String pc : computadorasAdicionales)
-            info.add(new Informacion(pc));
+        String origen = here().getName();
+
+        info.add(new Informacion(origen));
 
         info.add(new Informacion("Main-Container"));
 
-        info.add(new Informacion(here().getName()));
+        for (String pc : COMPUTADORAS_ADICIONALES)
+            info.add(new Informacion(pc));
     }
 
 
     public void setup() {
-        crearComputadoras();
-        inicializarInformacion();
-
         try {
-            ContainerID destino = new ContainerID(info.get(0).getContainer(), null);
+            crearComputadoras();
+
+            inicializarInformacion();
+
             tiempoInicial = System.currentTimeMillis();
-            doMove(destino);
+            moverseAlContainerSiguiente();
+
         } catch (Exception e) {
             System.out.println("\n\n\nNo fue posible migrar el agente\n\n\n");
+            e.printStackTrace();
         }
     }
 
@@ -73,17 +77,22 @@ public class AgenteMovil extends Agent {
 
     }
 
-    private boolean esPcOrigen(int indice) {
-        return indice == (info.size() - 1);
+    private boolean esPcOrigen() {
+        return actual == 0;
     }
 
-    private void mover(int indice) {
-        String nombreContainer = info.get(actual).getContainer();
+    private void moverseAlContainerSiguiente() {
+        int siguiente = siguiente();
+
+        actual = siguiente;
+
+        String nombreContainer = info.get(siguiente).getContainer();
         ContainerID destino = new ContainerID(nombreContainer, null);
+
         doMove(destino);
     }
 
-    private int siguiente(int indice) {
+    private int siguiente() {
         return (actual + 1) % info.size();
     }
 
@@ -92,17 +101,15 @@ public class AgenteMovil extends Agent {
 
             info.get(actual).actualizar();
 
-            if (esPcOrigen(actual)) {
+            if (esPcOrigen()) {
                 tiempoDeRecoleccion = System.currentTimeMillis() - tiempoInicial;
                 logearInformacion();
+
                 Thread.sleep(1000);
                 tiempoInicial = System.currentTimeMillis();
             }
 
-            int siguiente = siguiente(actual);
-
-            actual = siguiente;
-            mover(siguiente);
+            moverseAlContainerSiguiente();
 
         } catch (Exception e) {
             System.err.println("\n\n\nNo fue posible migrar el agente\n\n\n");
