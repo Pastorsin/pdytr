@@ -1,3 +1,5 @@
+import static java.lang.Math.pow;
+
 import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -17,7 +19,7 @@ public class Informacion implements Serializable {
         OperatingSystemMXBean bean = (OperatingSystemMXBean) ManagementFactory
                                      .getOperatingSystemMXBean();
 
-        this.cpuUsado = bean.getSystemCpuLoad() * 100;
+        this.cpuUsado = bean.getSystemCpuLoad();
         this.memoriaDisponible = bean.getFreePhysicalMemorySize();
     }
 
@@ -27,8 +29,10 @@ public class Informacion implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%-20s %-10.2f %d Bytes",
-                             container, cpuUsado, memoriaDisponible);
+        return String.format("%-20s %-10.2f %.2f MB",
+                             container, 
+                             cpuUsado * 100, 
+                             memoriaDisponible / pow(10,6));
     }
 
 }
