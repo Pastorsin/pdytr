@@ -12,6 +12,7 @@ done
 java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil &
 CLIENT_PID=$!
 
+#Espera unos segundos hasta que finalice la ejecución.
 sleep 1
 
 kill -9 $CLIENT_PID
