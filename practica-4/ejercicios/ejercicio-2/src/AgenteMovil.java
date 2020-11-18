@@ -9,9 +9,8 @@ import java.util.Scanner;
 public class AgenteMovil extends Agent {
     // Ejecutado por unica vez en la creacion
     private Integer suma = 0;
-    private String idOrigen, contenedorOrigen;
-    private static final String path = "database/numeros.csv";
-    
+    private String idOrigen, contenedorOrigen, path;
+
     public void migrarAgente(String container){
         // Migra el agente al container cuyo nombre llega por parametro
         try {
@@ -26,12 +25,15 @@ public class AgenteMovil extends Agent {
 
     public void setup() {
         Location origen = here();
-
+        Object[] args = getArguments();
+        String containerName = args[0].toString();
+        path = args[1].toString();
+        
         //Se guarda el nombre del container origen
         idOrigen = origen.getID() ;
         contenedorOrigen = (idOrigen).split("@")[0];
         System.out.println("\n\nContenedor origen: " + contenedorOrigen  + "\n");
-        migrarAgente("Main-Container");
+        migrarAgente(containerName);
     }
 
     // Ejecutado al llegar a un contenedor como resultado de una migracion
