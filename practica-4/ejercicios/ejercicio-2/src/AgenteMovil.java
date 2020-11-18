@@ -23,6 +23,32 @@ public class AgenteMovil extends Agent {
 
     }
 
+    public void realizarSuma(){
+        try{
+            //Se abre y se lee el archivo.
+            File archivo = new File(path);
+            Scanner lector = new Scanner(archivo);
+            
+            System.out.println("Contenido del archivo: ");
+            while (lector.hasNextLine()) {
+                String datos = lector.nextLine();
+                
+                //Realiza la suma de numeros y no tiene en cuenta las letras.
+                try{
+                    suma += Integer.parseInt(datos);
+                } catch(NumberFormatException e){
+                    continue;
+                }
+                System.out.println(datos);
+            }
+            lector.close();
+
+        } catch (FileNotFoundException e){
+            System.out.println("Ocurrio un error");
+            e.printStackTrace();
+        }
+    }
+
     public void setup() {
         Location origen = here();
         Object[] args = getArguments();
@@ -33,7 +59,11 @@ public class AgenteMovil extends Agent {
         idOrigen = origen.getID() ;
         contenedorOrigen = (idOrigen).split("@")[0];
         System.out.println("\n\nContenedor origen: " + contenedorOrigen  + "\n");
-        migrarAgente(containerName);
+        if(containerName.equals(contenedorOrigen)){
+            realizarSuma();
+        }else{
+            migrarAgente(containerName);
+        }
     }
 
     // Ejecutado al llegar a un contenedor como resultado de una migracion
@@ -47,33 +77,10 @@ public class AgenteMovil extends Agent {
             //El container origen imprime el resultado de la suma
             System.out.println("Resultado de la suma:" + suma + "\n");
         }else{
-            //Se abre y se lee el archivo.
-            try{
-                File archivo = new File(path);
-                Scanner lector = new Scanner(archivo);
-                
-                System.out.println("Contenido del archivo: ");
-                while (lector.hasNextLine()) {
-                    String datos = lector.nextLine();
-                    
-                    //Realiza la suma de numeros y no tiene en cuenta las letras.
-                    try{
-                        suma += Integer.parseInt(datos);
-                    } catch(NumberFormatException e){
-                        continue;
-                    }
-                    System.out.println(datos);
-                }
-                lector.close();
-                
-                System.out.println("\nEnviando suma al container origen");
-                migrarAgente(contenedorOrigen);
-
-            } catch (FileNotFoundException e){
-                System.out.println("Ocurrio un error");
-                e.printStackTrace();
-            }
-        }    
+            realizarSuma();
+            System.out.println("\nEnviando suma al container origen");
+            migrarAgente(contenedorOrigen); 
+        }
     }
 }
 //Tener en cuenta si me mandan como parametro el container origen.
