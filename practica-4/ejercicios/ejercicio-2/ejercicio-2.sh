@@ -9,7 +9,7 @@ until [ $(netstat -tulpn | grep "1099" | wc -l) -ge 1 ]; do
       sleep 1
 done
 
-java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(Main-Container, database/numeros.csv)' &
+java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil&
 CLIENT_PID=$!
 
 #Espera unos segundos hasta que finalice la ejecución.
