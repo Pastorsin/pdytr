@@ -83,4 +83,3 @@ public class AgenteMovil extends Agent {
         }
     }
 }
-//Tener en cuenta si me mandan como parametro el container origen.
