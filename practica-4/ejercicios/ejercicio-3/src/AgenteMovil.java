@@ -1,58 +1,21 @@
 import jade.core.*;
+import jade.core.behaviours.*;
 import jade.wrapper.*;
 
-import java.io.*;
-
-import static java.lang.Math.min;
 
 /* TODO:
 - Establecer los parametros
 - Poner como opcion la escritura destructiva
 - Testear:
---> Leer desde el origen al destino
---> Escribir desde el origen en el destino
+--> Escribir desde origen hacia origen
 */
 public class AgenteMovil extends Agent {
+    private String pathOrigen = "database/cliente.mp4";
+    private String pathDestino = "database/server.mp4";
+    private String pathCopiaDestino = "database/server-copia.mp4";
 
-    private String pathCliente = "database/cliente.mp4";
-    private String pathServidor = "database/server.mp4";
-
-    private String containerDestino = "Main-Container";
+    private String containerDestino = "Container-1";
     private String containerOrigen;
-
-    private String operacion = "leer";
-
-    // Refactor en nueva clase
-    // Clase base Operacion
-    // Subclases Lectura-Escribir que reusen el leer y escribir
-    private static final int VENTANA = 1000000;
-    private int bytesLeidos = 0;
-    private byte[] contenido;
-    private int bytesFaltantes = 0;
-
-
-    private void leer(String path) throws IOException, FileNotFoundException {
-        File archivo = new File(path);
-        FileInputStream fi = new FileInputStream(archivo);
-
-        fi.skip(bytesLeidos);
-        bytesFaltantes = (int) min(archivo.length() - bytesLeidos, VENTANA);
-
-        System.out.println("Bytes faltantes: " + bytesFaltantes);
-
-        contenido = new byte[bytesFaltantes];
-        bytesLeidos += fi.read(contenido, 0, bytesFaltantes);
-
-        fi.close();
-    }
-
-    private void escribir(String path) throws IOException, FileNotFoundException {
-        FileOutputStream fo = new FileOutputStream(path, true);
-        fo.write(contenido, 0, contenido.length);
-        fo.close();
-
-        System.out.println("Bytes escritos: " + contenido.length);
-    }
 
     private void moverAlContainer(String nombreContainer) {
         ContainerID destino = new ContainerID(nombreContainer, null);
@@ -62,33 +25,103 @@ public class AgenteMovil extends Agent {
     public void setup() {
         try {
             containerOrigen = here().getName();
+
+            SequentialBehaviour tareas = new SequentialBehaviour(this) {
+                public int onEnd() {
+                    System.out.println("Transferencias finalizadas.");
+                    doDelete();
+                    return super.onEnd();
+                }
+            };
+
+            TransferenciaBehaviour transferenciaCliente = new TransferenciaBehaviour(
+                containerOrigen,
+                containerDestino,
+                pathOrigen,
+                pathDestino
+            );
+
+            TransferenciaBehaviour transferenciaCopia = new TransferenciaBehaviour(
+                containerDestino,
+                containerOrigen,
+                pathCopiaDestino,
+                pathOrigen
+            );
+
+            tareas.addSubBehaviour(transferenciaCliente);
+            tareas.addSubBehaviour(transferenciaCopia);
+
+            addBehaviour(tareas);
+
             moverAlContainer(containerDestino);
+
         } catch (Exception e) {
-            System.out.println("\n\n\nNo fue posible migrar el agente\n\n\n");
+            System.out.println("No fue posible migrar el agente");
             e.printStackTrace();
         }
     }
 
-    protected void afterMove() {
-        try {
-            String containerActual = here().getName();
-            System.out.println("Estoy en el container " + containerActual);
+    private class TransferenciaBehaviour extends Behaviour {
+        /*
+         * Transfiere un archivo que reside en el container destino hacia el
+         * container origen
+        */
 
-            if (containerActual.equals(containerDestino)) {
-                leer();
-                moverAlContainer(containerOrigen);
-            } else {
-                escribir();
+        private String origen;
+        private String destino;
 
-                if (bytesFaltantes > 0)
-                    moverAlContainer(containerDestino);
-                else
-                    System.out.println("Termine!");
+        private String pathOrigen;
+        private String pathDestino;
+
+        Transferencia transferencia = new Transferencia();
+
+        private boolean finalizada = false;
+
+        public TransferenciaBehaviour(String origen, String destino,
+                                      String pathOrigen, String pathDestino) {
+            super();
+
+            this.origen = origen;
+            this.destino = destino;
+
+            this.pathOrigen = pathOrigen;
+            this.pathDestino = pathDestino;
+        }
+
+        public void action() {
+            try {
+                String containerActual = here().getName();
+
+                if (containerActual.equals(origen)) {
+                    System.out.println("Escritura en " + containerActual);
+
+                    transferencia.escribir(pathOrigen);
+
+                    finalizada = transferencia.finalizada();
+
+                    if (!finalizada)
+                        moverAlContainer(destino);
+
+                } else {
+                    System.out.println("Lectura en " + containerActual);
+
+                    transferencia.leer(pathDestino);
+                    moverAlContainer(origen);
+                }
+
+            } catch (Exception e) {
+                System.err.println("ERROR - Escribir/Leer archivo");
+                e.printStackTrace();
             }
+        }
 
-        } catch (Exception e) {
-            System.err.println("\n\n\nNo fue posible migrar el agente\n\n\n");
-            e.printStackTrace();
+        public boolean done() {
+            return finalizada;
+        }
+
+        public int onEnd() {
+            System.out.println("Transferencia finalizada en " + pathOrigen);
+            return super.onEnd();
         }
     }
 
