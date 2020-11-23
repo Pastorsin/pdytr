@@ -10,9 +10,9 @@ import jade.wrapper.*;
 --> Escribir desde origen hacia origen
 */
 public class AgenteMovil extends Agent {
-    private String pathOrigen = "database/cliente.mp4";
-    private String pathDestino = "database/server.mp4";
-    private String pathCopiaDestino = "database/server-copia.mp4";
+    private String pathOrigen = "database/cliente.jpg";
+    private String pathDestino = "database/server.jpg";
+    private String pathCopiaDestino = "database/server-copia.jpg";
 
     private String containerDestino = "Main-Container";
     private String containerOrigen;
@@ -45,10 +45,6 @@ public class AgenteMovil extends Agent {
             tareas.addSubBehaviour(transferenciaCopia);
 
             addBehaviour(tareas);
-
-            /* Se mueve al container destino para comenzar la lectura */
-            ContainerID destino = new ContainerID(containerDestino, null);
-            doMove(destino);
 
         } catch (Exception e) {
             System.out.println("No fue posible migrar el agente");

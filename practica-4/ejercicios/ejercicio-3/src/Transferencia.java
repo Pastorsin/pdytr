@@ -6,9 +6,10 @@ import static java.lang.Math.min;
 
 public class Transferencia implements Serializable {
 
-    private static final int VENTANA = 100000;
+    private static final int VENTANA = 1024;
+
     private long totalBytesLeidos = 0;
-    private byte[] contenido;
+    private byte[] contenido = new byte[0];
     private Long bytesFaltantes = null;
 
     public void leer(String path) throws IOException, FileNotFoundException {
@@ -32,22 +33,16 @@ public class Transferencia implements Serializable {
         bytesFaltantes = tamanioArchivo - totalBytesLeidos;
     }
 
-    public void escribir(String path) throws IOException, FileNotFoundException {
-        FileOutputStream fo = new FileOutputStream(path, modo());
+    public void escribir(String path, boolean append) throws IOException, FileNotFoundException {
+        FileOutputStream fo = new FileOutputStream(path, append);
         fo.write(contenido, 0, contenido.length);
         fo.close();
 
         System.out.println("Bytes escritos: " + contenido.length);
     }
 
-    private boolean modo() {
-        // Si es la primer iteracion, entonces la escritura se hace destructiva.
-        int chunk = contenido.length;
-        return totalBytesLeidos != chunk;
-    }
-
     public boolean finalizada() {
-        return bytesFaltantes.equals(0L);
+        return (bytesFaltantes != null) && (bytesFaltantes.equals(0L));
     }
 
 }

@@ -8,13 +8,13 @@ public class TransferenciaBehaviour extends Behaviour {
     */
     private String origen;
     private String destino;
-
     private String pathOrigen;
     private String pathDestino;
 
     Transferencia transferencia = new Transferencia();
 
-    private boolean finalizada = false;
+    private boolean escrituraFinalizada = false;
+    private boolean modoAppend = false;
 
     public TransferenciaBehaviour(String origen, String destino,
                                   String pathOrigen, String pathDestino) {
@@ -43,13 +43,11 @@ public class TransferenciaBehaviour extends Behaviour {
             if (containerActual().equals(origen)) {
                 System.out.println("Escritura en " + containerActual());
 
-                transferencia.escribir(pathOrigen);
+                transferencia.escribir(pathOrigen, modoAppend);
+                moverAlContainer(destino);
 
-                finalizada = transferencia.finalizada();
-
-                if (!finalizada)
-                    moverAlContainer(destino);
-
+                modoAppend = true;
+                escrituraFinalizada = transferencia.finalizada();
             } else {
                 System.out.println("Lectura en " + containerActual());
 
@@ -65,7 +63,7 @@ public class TransferenciaBehaviour extends Behaviour {
 
     @Override
     public boolean done() {
-        return finalizada;
+        return escrituraFinalizada;
     }
 
     @Override
