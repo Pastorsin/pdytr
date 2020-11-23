@@ -86,7 +86,7 @@ public class AgenteMovil extends Agent {
         }
     }
 
-    private void logearInformacion() {
+    private void loguearInformacion() {
         // Limpiar output
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -107,7 +107,7 @@ public class AgenteMovil extends Agent {
 
         if(idOrigen.equals(origen.getID())){
             //El container origen imprime el resultado de la suma
-            logearInformacion();
+            loguearInformacion();
         }else{
             realizarSuma();
             actual += 1;
