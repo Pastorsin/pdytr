@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class AgenteMovil extends Agent {
     // Ejecutado por unica vez en la creacion
     private Integer suma = 0;
-    private String idOrigen, contenedorOrigen, path;
+    private String contenedorOrigen, path;
 
     public void migrarAgente(String container){
         // Migra el agente al container cuyo nombre llega por parametro
@@ -52,15 +52,20 @@ public class AgenteMovil extends Agent {
     public void setup() {
         Location origen = here();
         Object[] args = getArguments();
+        if ((args == null) || (args.length != 2)) {
+            System.err.println("Argumentos invalidos, se necesitan 2 argumentos:");
+            System.err.println("<containerDestino> <path>");
+            System.exit(1);
+        }
         String containerName = args[0].toString();
         path = args[1].toString();
         
         //Se guarda el nombre del container origen
-        idOrigen = origen.getID() ;
-        contenedorOrigen = (idOrigen).split("@")[0];
+        contenedorOrigen = origen.getName();
         System.out.println("\n\nContenedor origen: " + contenedorOrigen  + "\n");
         if(containerName.equals(contenedorOrigen)){
             realizarSuma();
+            System.out.println("Resultado de la suma:" + suma + "\n");
         }else{
             migrarAgente(containerName);
         }
@@ -68,12 +73,12 @@ public class AgenteMovil extends Agent {
 
     // Ejecutado al llegar a un contenedor como resultado de una migracion
     protected void afterMove() {
-        Location origen = here();
+        Location actual = here();
         System.out.println("\n\nHola, agente migrado con nombre local " + getLocalName());
         System.out.println("Y nombre completo... " + getName());
-        System.out.println("Y en location " + origen.getID() + "\n");
+        System.out.println("Y en location " + actual.getID() + "\n");
 
-        if(idOrigen.equals(origen.getID())){
+        if(contenedorOrigen.equals(actual.getName())){
             //El container origen imprime el resultado de la suma
             System.out.println("Resultado de la suma:" + suma + "\n");
         }else{

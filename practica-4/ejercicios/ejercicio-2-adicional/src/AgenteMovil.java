@@ -20,7 +20,7 @@ public class AgenteMovil extends Agent {
     private Integer sumaTotal = 0;
     private Integer[] suma = new Integer[4];
 
-    private String idOrigen, contenedorOrigen, path;
+    private String contenedorOrigen, path;
 
     private void crearComputadoras() {
         jade.core.Runtime runtime = jade.core.Runtime.instance();
@@ -51,8 +51,7 @@ public class AgenteMovil extends Agent {
         Location origen = here();
         
         //Se guarda el nombre del container origen
-        idOrigen = origen.getID() ;
-        contenedorOrigen = (idOrigen).split("@")[0];
+        contenedorOrigen = origen.getName();
         System.out.println("\n\nContenedor origen: " + contenedorOrigen  + "\n");
         COMPUTADORAS_ADICIONALES.add("Main-Container");
         COMPUTADORAS_ADICIONALES.add(contenedorOrigen);
@@ -100,12 +99,12 @@ public class AgenteMovil extends Agent {
     }
 
     protected void afterMove() {
-        Location origen = here();
+        Location here = here();
         System.out.println("\n\nHola, agente migrado con nombre local " + getLocalName());
         System.out.println("Y nombre completo... " + getName());
-        System.out.println("Y en location " + origen.getID() + "\n");
+        System.out.println("Y en location " + here.getID() + "\n");
 
-        if(idOrigen.equals(origen.getID())){
+        if(contenedorOrigen.equals(here.getName())){
             //El container origen imprime el resultado de la suma
             loguearInformacion();
         }else{
