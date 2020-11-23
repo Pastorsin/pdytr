@@ -3,9 +3,6 @@ import jade.core.behaviours.*;
 import jade.wrapper.*;
 
 
-/* TODO:
-- Establecer los parametros
-*/
 public class AgenteMovil extends Agent {
     private String pathOrigen;
     private String pathDestino;
