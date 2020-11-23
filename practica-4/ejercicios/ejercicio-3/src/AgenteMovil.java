@@ -44,7 +44,7 @@ public class AgenteMovil extends Agent {
         /* Control de argumentos */
         Object[] args = getArguments();
 
-        if (args.length != 4) {
+        if ((args == null) || (args.length != 4)) {
             System.err.println("Argumentos invalidos, se necesitan 4 argumentos:");
             System.err.println("<containerDestino> <pathOrigen>" +
                                "<pathDestino> <pathCopiaDestino>");
