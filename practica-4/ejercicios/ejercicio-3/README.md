@@ -12,4 +12,4 @@
 ### Boot:
 `java -cp bin/jade.jar jade.Boot -gui`
 ### Agente:
-`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil`
+`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(Main-Container, database/cliente.jpg, database/server.jpg, database/server-copia.jpg)'`

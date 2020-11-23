@@ -40,6 +40,16 @@ public class AgenteMovil extends Agent {
             info.add(new Informacion(pc));
     }
 
+    private void moverseAlContainerSiguiente() {
+        int siguiente = siguiente();
+
+        actual = siguiente;
+
+        String nombreContainer = info.get(siguiente).getContainer();
+        ContainerID destino = new ContainerID(nombreContainer, null);
+
+        doMove(destino);
+    }
 
     public void setup() {
         try {
@@ -60,15 +70,17 @@ public class AgenteMovil extends Agent {
         // Limpiar output
         System.out.print("\033[H\033[2J");
         System.out.flush();
-        
+
         // Encabezados
         System.out.println("-----------------");
         System.out.println("ORIGEN: " + here().getName());
         System.out.printf("TIEMPO DE RECOLECCION: %d ms.\n", tiempoDeRecoleccion);
         System.out.println("-----------------");
 
-        System.out.printf("%-20s %-10s %-10s\n",
-                          "NOMBRE", "CPU USADO",
+        System.out.printf("%-20s %-20s %-10s %-10s\n",
+                          "CONTAINER",
+                          "NOMBRE PC",
+                          "CPU USADO",
                           "MEMORIA DISPONIBLE");
 
         // Contenido
@@ -81,16 +93,6 @@ public class AgenteMovil extends Agent {
         return actual == 0;
     }
 
-    private void moverseAlContainerSiguiente() {
-        int siguiente = siguiente();
-
-        actual = siguiente;
-
-        String nombreContainer = info.get(siguiente).getContainer();
-        ContainerID destino = new ContainerID(nombreContainer, null);
-
-        doMove(destino);
-    }
 
     private int siguiente() {
         return (actual + 1) % info.size();

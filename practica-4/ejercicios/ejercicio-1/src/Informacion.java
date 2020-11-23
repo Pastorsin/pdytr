@@ -5,6 +5,8 @@ import com.sun.management.OperatingSystemMXBean;
 
 import java.io.Serializable;
 
+import java.net.*;
+
 
 public class Informacion implements Serializable {
     private String container;
@@ -27,12 +29,25 @@ public class Informacion implements Serializable {
         return container;
     }
 
+    public String getHostname() {
+        InetAddress ip;
+        String hostname;
+
+        try {
+            ip = InetAddress.getLocalHost();
+            return ip.getHostName();
+        } catch (UnknownHostException e) {
+            return "Desconocido";
+        }
+    }
+
     @Override
     public String toString() {
-        return String.format("%-20s %-10.2f %.2f MB",
-                             container, 
-                             cpuUsado * 100, 
-                             memoriaDisponible / pow(10,6));
+        return String.format("%-20s %-20s %-10.2f %.2f MB",
+                             container,
+                             getHostname(),
+                             cpuUsado * 100,
+                             memoriaDisponible / pow(10, 6));
     }
 
 }
