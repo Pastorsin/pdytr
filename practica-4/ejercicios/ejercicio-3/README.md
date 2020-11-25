@@ -11,5 +11,9 @@
 ## Ejecución:
 ### Boot:
 `java -cp bin/jade.jar jade.Boot -gui`
-### Agente:
-`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(Main-Container, database/cliente.jpg, database/server.jpg, database/server-copia.jpg)'`
+### Agente modo LECTURA:
+`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(-r, Main-Container, database/cliente.jpg, database/server.jpg)'`
+### Agente modo ESCRITURA:
+`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(-w, Main-Container, database/cliente.jpg, database/server.jpg)'`
+### Agente modo LECTURA/ESCRITURA:
+`java -cp bin/jade.jar:classes jade.Boot -gui -container -host localhost -agents mol:AgenteMovil'(-rw, Main-Container, database/cliente.jpg, database/server.jpg, database/server-copia.jpg)'`
