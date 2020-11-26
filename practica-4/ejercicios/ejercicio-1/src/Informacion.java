@@ -12,6 +12,7 @@ public class Informacion implements Serializable {
     private String container;
     private double cpuUsado;
     private long memoriaDisponible;
+    private String hostname;
 
     public Informacion(String container) {
         this.container = container;
@@ -23,6 +24,7 @@ public class Informacion implements Serializable {
 
         this.cpuUsado = bean.getSystemCpuLoad();
         this.memoriaDisponible = bean.getFreePhysicalMemorySize();
+        this.hostname = getHostname();
     }
 
     public String getContainer() {
@@ -45,7 +47,7 @@ public class Informacion implements Serializable {
     public String toString() {
         return String.format("%-20s %-20s %-10.2f %.2f MB",
                              container,
-                             getHostname(),
+                             hostname,
                              cpuUsado * 100,
                              memoriaDisponible / pow(10, 6));
     }
