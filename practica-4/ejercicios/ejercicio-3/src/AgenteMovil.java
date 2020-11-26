@@ -14,14 +14,14 @@ public class AgenteMovil extends Agent {
     private final SequentialBehaviour tareas = new SequentialBehaviour(this) {
         public int onEnd() {
             System.out.println("Transferencias finalizadas.");
-            onDestroy();
+            onDestroy(0);
             return super.onEnd();
         }
     };
 
-    public void onDestroy() {
+    public void onDestroy(int estadoSalida) {
         doDelete();
-        System.exit(0);
+        System.exit(estadoSalida);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class AgenteMovil extends Agent {
 
         if (args == null) {
             System.err.println("Especifique alguna operacion: -r -w -rw");
-            System.exit(1);
+            onDestroy(1);
         }
 
         String operacion = args[0].toString();
@@ -47,7 +47,7 @@ public class AgenteMovil extends Agent {
             if (args.length != 4) {
                 System.err.println("Argumentos invalidos, se necesitan 3 argumentos:");
                 System.err.println("-r <containerDestino> <pathOrigen> <pathDestino>");
-                System.exit(1);
+                onDestroy(1);
             }
 
             containerDestino = args[1].toString();
@@ -65,7 +65,7 @@ public class AgenteMovil extends Agent {
             if (args.length != 4) {
                 System.err.println("Argumentos invalidos, se necesitan 3 argumentos:");
                 System.err.println("-w <containerDestino> <pathOrigen> <pathDestino>");
-                System.exit(1);
+                onDestroy(1);
             }
 
             containerDestino = args[1].toString();
@@ -84,7 +84,7 @@ public class AgenteMovil extends Agent {
                 System.err.println("Argumentos invalidos, se necesitan 4 argumentos:");
                 System.err.println("-rw <containerDestino> <pathOrigen>" +
                                    "<pathDestino> <pathCopiaDestino>");
-                System.exit(1);
+                onDestroy(1);
             }
 
             containerDestino = args[1].toString();
@@ -107,7 +107,7 @@ public class AgenteMovil extends Agent {
         default:
             System.err.println("Operacion invalida");
             System.err.println("Operaciones disponibles: -r -w -rw");
-            System.exit(1);
+            onDestroy(1);
         }
 
         /* Adicion de Comportamiento */
