@@ -32,11 +32,8 @@ public class Informacion implements Serializable {
     }
 
     public String getHostname() {
-        InetAddress ip;
-        String hostname;
-
         try {
-            ip = InetAddress.getLocalHost();
+            InetAddress ip = InetAddress.getLocalHost();
             return ip.getHostName();
         } catch (UnknownHostException e) {
             return "Desconocido";
